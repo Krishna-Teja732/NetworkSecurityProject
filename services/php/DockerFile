@@ -6,3 +6,11 @@ RUN docker-php-ext-install pdo pdo_mysql
 
 # Set the working dir for php-fpm
 WORKDIR /var/www
+
+# TODO: Remove xdebug for prod build
+# Reference: https://stackoverflow.com/questions/31583646/cannot-find-autoconf-please-check-your-autoconf-installation-xampp-in-centos
+RUN apk add --update linux-headers
+RUN apk --no-cache add pcre-dev ${PHPIZE_DEPS} \ 
+  && pecl install xdebug-3.4.0\
+  && docker-php-ext-enable xdebug \
+  && apk del pcre-dev ${PHPIZE_DEPS}

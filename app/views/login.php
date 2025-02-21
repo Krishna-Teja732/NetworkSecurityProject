@@ -11,8 +11,10 @@
 </head>
 
 <body>
-	<form method="post">
-		<input id="username" type="text" placeholder="Username" class="form-control">
+	<form method="post" action="/api/login-handler">
+		<input name="username" id="username" type="text" placeholder="Username" class="form-control" required>
+		<input name="password" id="password" type="password" placeholder="Password" class="form-control" required>
+		<input type="submit" class="btn btn-primary">
 	</form>
 </body>
 
