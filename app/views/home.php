@@ -1,3 +1,8 @@
+<?php
+include __DIR__ . "/../src/utils/db-utils.php";
+?>
+
+
 <!doctype html>
 <html lang="en">
 
@@ -33,6 +38,23 @@
 			</ul>
 		</div>
 	</nav>
+
+	<div>
+		<ul>
+			<?php
+			$result = list_all_users();
+
+			if ($result == null) {
+				exit();
+			}
+			foreach ($result as $row) {
+				$list_item = '<li>' . sprintf("username=%s, email=%s, description=%s", $row['username'],  $row['email'], $row['description']) . '</li>';
+				echo $list_item;
+			}
+			?>
+		</ul>
+
+	</div>
 
 </body>
 

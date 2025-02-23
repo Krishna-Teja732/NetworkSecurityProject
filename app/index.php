@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+openlog("app-log", LOG_PID | LOG_PERROR, LOG_LOCAL0);
+
 include "./src/api.php";
 
 $request_uri = $_SERVER['REQUEST_URI'];
