@@ -1,1 +1,2 @@
-./services/sql/sql_data
+# Remove sql files from source control 
+services/sql/sql_data
