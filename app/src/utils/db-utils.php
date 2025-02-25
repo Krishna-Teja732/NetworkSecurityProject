@@ -27,3 +27,6 @@ function list_all_users()
 function create_new_user(string $username, string $email, string $password, int $balance = 100) {}
 function create_new_transaction(string $sender_uname, string $receiver_uname, float $amount, string $description) {}
 function get_user_profile_info() {}
+
+#TODO: 
+# Fucntion to get username, password_hash and password salt from the database

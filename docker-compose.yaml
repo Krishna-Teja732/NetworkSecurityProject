@@ -6,12 +6,16 @@ services:
     image: httpd:2.4.62
     # TODO: Use a env var for the host port, this will be usefull when deploying
     ports:
-      - 80:80
+      - 10001:443
     working_dir: /var/www
     # TODO: Create DockerFile to copy configs instead of using volume 
+    # Find proper dir to store keys
+    # Rotate server crt before submission
     volumes:
       - ./services/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./services/httpd/extra:/usr/local/apache2/conf/extra
+      - ./services/httpd/keys/server.crt:/usr/local/apache2/keys/server.crt
+      - ./services/httpd/keys/server.key:/usr/local/apache2/keys/server.key
     volumes_from:
       - data
     networks: 
@@ -19,6 +23,8 @@ services:
 
   # PHP web app
   php:
+    #TODO: Copy php-production.ini file to docker container
+    # Make sure "display_errors = Off" in php-production.ini file. Reference: https://stackoverflow.com/questions/8928021/stop-printing-php-error-messages-to-browser, https://forums.docker.com/t/docker-compose-yml-services-for-php-fpm/52677
     container_name: php-fpm
     build:
       dockerfile: ./services/php/DockerFile
