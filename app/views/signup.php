@@ -11,13 +11,13 @@
 </head>
 
 <body>
-	<form method="post" action="/api/login-handler">
+	<form method="post" action="/api/create-user">
 		<input name="username" id="username" type="text" placeholder="Username" class="form-control" required>
 		<input name="password" id="password" type="password" placeholder="Password" class="form-control" required>
+		<input name="confirm-password" id="confitm-password" type="password" placeholder="Confirm Passowrd" class="form-control" required>
+		<input name="email" id="email" type="email" placeholder="Email" class="form-control" required>
 		<input type="submit" class="btn btn-primary">
 	</form>
-
-	<button onclick="location.href='/signup';" class="btn btn-primary">Signup</button>
 </body>
 
 </html>
