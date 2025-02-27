@@ -4,13 +4,10 @@ services:
   httpd:
     container_name: httpd-server
     image: httpd:2.4.62
-    # TODO: Use a env var for the host port, this will be usefull when deploying
     ports:
-      - 10001:443
+      - ${SERVER_PORT}:443
     working_dir: /var/www
-    # TODO: Create DockerFile to copy configs instead of using volume 
-    # Find proper dir to store keys
-    # Rotate server crt before submission
+    # TODO:: Rotate server crt before submission
     volumes:
       - ./services/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
       - ./services/httpd/extra:/usr/local/apache2/conf/extra
@@ -26,8 +23,10 @@ services:
     #TODO: Copy php-production.ini file to docker container
     # Make sure "display_errors = Off" in php-production.ini file. Reference: https://stackoverflow.com/questions/8928021/stop-printing-php-error-messages-to-browser, https://forums.docker.com/t/docker-compose-yml-services-for-php-fpm/52677
     container_name: php-fpm
+    env_file: .env
     build:
-      dockerfile: ./services/php/DockerFile
+      context: ./services/php
+      dockerfile: ./DockerFile
     volumes_from:
       - data
     depends_on:
@@ -38,25 +37,22 @@ services:
   data:
     container_name: source_code
     image: busybox:stable
-    # TODO: Create DockerFile to copy the source to /var/www
-    # New entry in volume will look like '/var/www' instead of './app:/var/www'
     volumes:
       - ./app:/var/www
 
   db:
-    container_name: mysql
-    image: mysql:8.4 
+    container_name: ${MYSQL_HOSTNAME}
+    image: mysql:8.4
     volumes:
-      - ./services/sql/sql_data:/var/lib/mysql
+      - ./services/sql/app-data-dump.sql:/docker-entrypoint-initdb.d/app-data-dump.sql
     # TODO: Remove port after developement
     ports:
       - 33060:3306 
-    # TODO: replace with environment variable values from .env
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: temp-db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     networks: 
       - web-app-network
 
