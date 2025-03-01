@@ -3,16 +3,13 @@ services:
   # Apache httpd webserver 
   httpd:
     container_name: httpd-server
-    image: httpd:2.4.62
     ports:
       - ${SERVER_PORT}:443
-    working_dir: /var/www
-    # TODO:: Rotate server crt before submission
-    volumes:
-      - ./services/httpd/httpd.conf:/usr/local/apache2/conf/httpd.conf
-      - ./services/httpd/extra:/usr/local/apache2/conf/extra
-      - ./services/httpd/keys/server.crt:/usr/local/apache2/keys/server.crt
-      - ./services/httpd/keys/server.key:/usr/local/apache2/keys/server.key
+    build: 
+      context: .
+      dockerfile: ./services/httpd/DockerFile
+    depends_on:
+      - data 
     volumes_from:
       - data
     networks: 
@@ -20,25 +17,25 @@ services:
 
   # PHP web app
   php:
-    #TODO: Copy php-production.ini file to docker container
-    # Make sure "display_errors = Off" in php-production.ini file. Reference: https://stackoverflow.com/questions/8928021/stop-printing-php-error-messages-to-browser, https://forums.docker.com/t/docker-compose-yml-services-for-php-fpm/52677
     container_name: php-fpm
     env_file: .env
     build:
-      context: ./services/php
-      dockerfile: ./DockerFile
+      context: .
+      dockerfile: ./services/php/DockerFile
+    depends_on:
+      - data 
     volumes_from:
       - data
-    depends_on:
-      - httpd 
     networks: 
       - web-app-network
 
   data:
-    container_name: source_code
-    image: busybox:stable
+    container_name: source-code
+    build:
+      context: .
+      dockerfile: ./services/data/DockerFile
     volumes:
-      - ./app:/var/www
+      - /var/www/
 
   db:
     container_name: ${MYSQL_HOSTNAME}

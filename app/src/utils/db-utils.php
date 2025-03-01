@@ -56,5 +56,26 @@ function get_user_password(string $username): string|null
 	return $password_hash;
 }
 
+# Return the user profile info as an associative array
+# Associative array contains the following keys
+#	username, email, description and profile_picture_path 
+function get_user_profile_info(string $username): array|null
+{
+	$user_info = null;
+	try {
+		$db = get_db_connection();
+		$query = $db->prepare("select username, email, description, profile_picture_path from users where username = ?;");
+		$query->bind_param("s", $username);
+		$query->execute();
+		$result = $query->get_result();
+		if ($result->num_rows == 1) {
+			$user_info = $result->fetch_assoc();
+		}
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+	}
+
+	return $user_info;
+}
+
 function create_new_transaction(string $sender_uname, string $receiver_uname, float $amount, string $description) {}
-function get_user_profile_info() {}
