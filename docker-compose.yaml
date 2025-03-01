@@ -36,6 +36,12 @@ services:
       dockerfile: ./services/data/DockerFile
     volumes:
       - /var/www/
+    # TODO: remove watch before production
+    develop:
+      watch:
+        - path: ./app 
+          action: sync 
+          target: /var/www/html
 
   db:
     container_name: ${MYSQL_HOSTNAME}
