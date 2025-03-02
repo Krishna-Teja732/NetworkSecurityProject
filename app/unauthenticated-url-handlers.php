@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 include_once __DIR__ . "/url-definitions.php";
 include_once __DIR__ . "/src/api.php";
+require_once __DIR__ . "/src/utils/input-sanatization-utils.php";
 
 $request_uri = $_SERVER['REQUEST_URI'];
 
@@ -29,11 +30,13 @@ switch ($request_uri) {
 			isset($_POST['password']) &&
 			isset($_POST['confirm-password']) &&
 			isset($_POST['email']) &&
+			count(validate_signup_inputs($_POST['username'], $_POST['password'], $_POST['email'])) == 0 &&
 			handle_create_user($_POST['username'], $_POST['password'], $_POST['confirm-password'], $_POST['email'])
 		) {
-			echo "Created user";
+			require __DIR__ . "/views/login.php";
 		} else {
-			echo "Create user failed";
+			header("Location: /signup");
+        	exit;
 		}
 		exit();
 	default:
