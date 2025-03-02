@@ -33,10 +33,15 @@ switch ($request_uri) {
 			count(validate_signup_inputs($_POST['username'], $_POST['password'], $_POST['email'])) == 0 &&
 			handle_create_user($_POST['username'], $_POST['password'], $_POST['confirm-password'], $_POST['email'])
 		) {
-			require __DIR__ . "/views/login.php";
+			header("Location: /login");
+			$session_id = session_id();
+			setcookie($session_id, "Signup succesfull for username: " . $_POST['username'], path: '/');
+			exit();
+
+
 		} else {
 			header("Location: /signup");
-        	exit;
+        	exit();
 		}
 		exit();
 	default:

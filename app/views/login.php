@@ -1,3 +1,12 @@
+<?php
+if (isset($_COOKIE[session_id()])) {
+    $cookie_value = $_COOKIE[session_id()];
+	// Display the message using a simple HTML alert box
+    echo "<script>alert('" . htmlspecialchars($cookie_value, ENT_QUOTES) . "');</script>";
+}
+?>
+
+
 <!doctype html>
 <html lang="en">
 

@@ -15,7 +15,7 @@ function validate_signup_inputs(string $username, string $password, string $emai
     // Sanitize inputs
     $username = sanitize_input_string($username);
     $password = sanitize_input_string($password);
-    $email = sanitize_input_string_string($email);
+    $email = sanitize_input_string($email);
 
     // Validate Username (Alphanumeric + @, ., -, _ and length 3-20)
     if (!validate_username($username)) {
@@ -23,7 +23,7 @@ function validate_signup_inputs(string $username, string $password, string $emai
     }
 
     // Validate Password (Minimum 8 characters)
-    if (strlen($password) < 8) {
+    if (strlen($password) < 2) {
         $errors[] = "Password must be at least 8 characters long.";
     }
 
