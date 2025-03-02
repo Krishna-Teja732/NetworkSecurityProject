@@ -11,27 +11,20 @@ switch ($request_uri) {
 	case HOME:
 		require __DIR__ . "/views/home.php";
 		exit();
-	case PROFILE_PICTURE_UPDATE_HANDLER:
-		handle_update_profile_picture();
-		exit();
 	case MY_PROFILE:
-		require __DIR__ . "/views/profile.php";
+		handle_view_profile($session_username, is_owner: true);
+		exit();
+	case PROFILE_PICTURE_UPDATE_HANDLER:
+		handle_update_profile_picture($session_username);
 		exit();
 	case str_starts_with($request_uri, OTHER_USER_PROFILE):
-		# Page to view other user's profile
-		$username = substr($request_uri, mb_strlen("/profile/u/"));
-		if (is_null($data = get_user_profile_info($username))) {
-			require __DIR__ . "/views/404.php";
-		} else {
-			# To send the profile picture, there's an apache mod_rewrite rule to serve images directly
-			# any url starting with /picture/.*\.png will be served from ./data/profile-pictures/
-			$data['profile_picture_path'] = "/picture/" . $data['profile_picture_path'];
-			require __DIR__ . "/views/profile.php";
-		}
-		break;
+		$view_username = substr($request_uri, mb_strlen("/profile/u/"));
+		handle_view_profile($view_username, is_owner: false);
+		exit();
 	case in_array($request_uri, UNAUTHENTICATED_URL_LIST):
 		header("Location: " . HOME);
 		exit();
 	default:
 		require __DIR__ . "/views/404.php";
+		exit();
 }

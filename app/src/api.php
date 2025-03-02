@@ -41,6 +41,20 @@ function handle_create_user(string $username, string $password, string $confirm_
 	return create_new_user($username, $email, $password) == 0;
 }
 
+function handle_view_profile(string $username, bool $is_owner)
+{
+	# Page to view other user's profile
+	if (is_null($data = get_user_profile_info($username))) {
+		require __DIR__ . "/../views/404.php";
+	} else {
+		# To send the profile picture, there's an apache mod_rewrite rule to serve images directly
+		# any url starting with /picture/.*\.png will be served from ./data/profile-pictures/
+		$data['profile_picture_path'] = "/picture/" . $data['profile_picture_path'];
+		$data['is_owner'] = $is_owner;
+		require __DIR__ . "/../views/profile.php";
+	}
+}
+
 
 // Profile picture update
 # The following sanitization is performed on the uploaded file 
@@ -55,10 +69,10 @@ function handle_create_user(string $username, string $password, string $confirm_
 # 9. Remove exec permission from file 
 # The images are stored in /var/www/data/profile-pictures/*.png
 const UPLOAD_DIR = "/var/www/data/profile-pictures";
-function handle_update_profile_picture(): bool
+function handle_update_profile_picture(string $username)
 {
 	if (!isset($_FILES['profile-picture']['tmp_name']) || $_FILES['profile-picture']['error'] != 0) {
-		echo "File is empty/unsupported";
+		header("Location: " . MY_PROFILE);
 		exit();
 	}
 	$allowed_extensions = ['png'];
@@ -72,7 +86,7 @@ function handle_update_profile_picture(): bool
 		!in_array($file_extension, $allowed_extensions) ||
 		!is_uploaded_file($temp_file_name)
 	) {
-		echo "invalid image";
+		header("Location: " . MY_PROFILE);
 		exit();
 	}
 
@@ -84,14 +98,33 @@ function handle_update_profile_picture(): bool
 
 	$image = @imagescale($image, width: 100, height: 100);
 	if (!$image) {
-		echo "invalid image";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	$old_file_name = get_profile_picture_path($username);
+	if (is_null($old_file_name)) {
+		header("Location: " . MY_PROFILE);
+		syslog(LOG_ERR, "ERROR: Old profile picture name is null");
 		exit();
 	}
 
 	# create new file name
 	$new_file_name = bin2hex(random_bytes(12)) . ".png";
-	if (!imagepng($image, join(DIRECTORY_SEPARATOR, [UPLOAD_DIR, $new_file_name]))) {
-		echo "invalid image";
+	if (
+		!update_profile_picture($username, $new_file_name) ||
+		!imagepng($image, join(DIRECTORY_SEPARATOR, [UPLOAD_DIR, $new_file_name]))
+	) {
+		header("Location: " . MY_PROFILE);
+		exit();
 	}
-	return true;
+
+	# delete the old file
+	if (strcmp($old_file_name, "default-user-icon.png") != 0) {
+		$status = unlink(join(DIRECTORY_SEPARATOR, [UPLOAD_DIR, $old_file_name]));
+		$status = $status ? "SUCCESSFUL" : "FAILED";
+		syslog(LOG_INFO, "WARN: old profile picture delete status: $status");
+	}
+
+	header("Location: " . MY_PROFILE);
 }

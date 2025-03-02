@@ -6,6 +6,8 @@ openlog("app-log", LOG_PID | LOG_PERROR, LOG_LOCAL0);
 
 include_once __DIR__ . "/src/utils/db-utils.php";
 
+syslog(LOG_INFO, "INFO: User request" . $_SERVER['REMOTE_ADDR'] . " " . $_SERVER['REQUEST_URI'] . " " . $_SERVER['REQUEST_METHOD']);
+
 // Authentication code.
 $is_valid_cookie = false;
 if (isset($_COOKIE['session'])) {
