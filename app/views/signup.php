@@ -11,7 +11,7 @@
 </head>
 
 <body>
-	<form method="post" action="/api/create-user">
+	<form method="post" action="/api/signup-handler">
 		<input name="username" id="username" type="text" placeholder="Username" class="form-control" required>
 		<input name="password" id="password" type="password" placeholder="Password" class="form-control" required>
 		<input name="confirm-password" id="confitm-password" type="password" placeholder="Confirm Passowrd" class="form-control" required>

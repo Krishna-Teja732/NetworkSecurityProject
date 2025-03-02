@@ -36,10 +36,18 @@
 
 	<div>
 		<img src=<?php echo $data['profile_picture_path'] ?>>
-		<form method="post" action="/api/update-profile-picture" enctype="multipart/form-data">
-			<input name="profile-picture" type="file" required>
-			<input type="submit">
-		</form>
+
+		<?php
+		if ($data['is_owner']) {
+		?>
+			<form method="post" action="/api/update-profile-picture" enctype="multipart/form-data">
+				<input name="profile-picture" type="file" required>
+				<input type="submit">
+			</form>
+		<?php
+		}
+		?>
+
 		<p>Username: <?php echo $data['username'] ?></p>
 		<p>Email: <?php echo $data['email'] ?></p>
 		<p>Description: <?php echo $data['description'] ?></p>

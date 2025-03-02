@@ -80,9 +80,6 @@ function get_user_profile_info(string $username): array|null
 
 function username_exists(string $username): bool
 {
-	if (is_null($username)) {
-		return false;
-	}
 	$user_exists = false;
 	try {
 		$db = get_db_connection();
@@ -98,6 +95,42 @@ function username_exists(string $username): bool
 	}
 
 	return $user_exists;
+}
+
+function get_profile_picture_path(string $username): string| null
+{
+	$profile_picture_path = null;
+	try {
+		$db = get_db_connection();
+		$query = $db->prepare("select profile_picture_path from users where username = ?;");
+		$query->bind_param("s", $username);
+		$query->execute();
+		$result = $query->get_result();
+		if ($result->num_rows == 1) {
+			$profile_picture_path = $result->fetch_column();
+		}
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+	}
+
+	return $profile_picture_path;
+}
+
+function update_profile_picture(string $username, string $new_picture_name): bool
+{
+	$update_success = false;
+	try {
+		$db = get_db_connection();
+		$query = $db->prepare("update users set profile_picture_path = ? where username = ?");
+		$query->bind_param("ss", $new_picture_name, $username);
+		$query->execute();
+		if ($query->errno == 0 && $query->affected_rows == 1) {
+			$update_success = true;
+		}
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+	}
+	return $update_success;
 }
 
 function create_new_transaction(string $sender_uname, string $receiver_uname, float $amount, string $description) {}
