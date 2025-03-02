@@ -78,4 +78,26 @@ function get_user_profile_info(string $username): array|null
 	return $user_info;
 }
 
+function username_exists(string $username): bool
+{
+	if (is_null($username)) {
+		return false;
+	}
+	$user_exists = false;
+	try {
+		$db = get_db_connection();
+		$query = $db->prepare("select username from users where username = ?;");
+		$query->bind_param("s", $username);
+		$query->execute();
+		$result = $query->get_result();
+		if ($result->num_rows == 1) {
+			$user_exists = true;
+		}
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+	}
+
+	return $user_exists;
+}
+
 function create_new_transaction(string $sender_uname, string $receiver_uname, float $amount, string $description) {}
