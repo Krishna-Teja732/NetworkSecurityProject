@@ -6,8 +6,12 @@ include_once __DIR__ . "/url-definitions.php";
 include_once __DIR__ . "/src/api.php";
 
 $request_uri = $_SERVER['REQUEST_URI'];
+# Strip trailing '/' from request uri
+if ($request_uri != '/' && substr($request_uri, -1, 1) == '/') {
+	$request_uri = substr($request_uri, 0, -1);
+}
 
-# Send 404 for any other URL
+# Redirect to login for invalid URL 
 if (!in_array($request_uri, UNAUTHENTICATED_URL_LIST)) {
 	header("Location: " . LOGIN);
 	exit();
