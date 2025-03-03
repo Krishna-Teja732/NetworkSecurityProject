@@ -133,4 +133,58 @@ function update_profile_picture(string $username, string $new_picture_name): boo
 	return $update_success;
 }
 
-function create_new_transaction(string $sender_uname, string $receiver_uname, float $amount, string $description) {}
+function create_new_transaction(string $sender_uname, string $receiver_uname, float $amount, string $description): int
+{
+	try {
+		$db = get_db_connection();
+		$db->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+		# Lock the sender and receiver records
+		$query = $db->prepare("select username, balance from users where username = ? or username = ? for update");
+		$query->bind_param("ss", $sender_uname, $receiver_uname);
+		$query->execute();
+		$result = $query->get_result();
+		if ($query->errno != 0 || $result->num_rows != 2) {
+			throw new Exception("ERROR: Lock rows in transaction failed. " . $query->error);
+		}
+
+		# Store the sender and receiver balance
+		$balance = [];
+		$row = $result->fetch_assoc();
+		$balance[$row['username']] = $row['balance'];
+		$row = $result->fetch_assoc();
+		$balance[$row['username']] = $row['balance'];
+
+		# Update the balance
+		$balance[$sender_uname] -= $amount;
+		$balance[$receiver_uname] += $amount;
+
+		# Add record to the transaction table
+		$transaction_id = random_bytes(16);
+		$query = $db->prepare("insert into transactions values (?, ?, ?, ?, ?)");
+		$query->bind_param("sssis", $transaction_id, $sender_uname, $receiver_uname, $amount, $description);
+		$query->execute();
+		if ($query->errno != 0 || $query->affected_rows != 1) {
+			throw new Exception("ERROR: Insert transation record failed. " . $query->error);
+		}
+
+		# Update the balance
+		$query = $db->prepare("update users set balance = ? where username = ?");
+		$query->bind_param("is", $balance[$sender_uname], $sender_uname);
+		$query->execute();
+		if ($query->errno != 0 || $query->affected_rows != 1) {
+			throw new Exception("ERROR: Update balance failed. " . $query->error);
+		}
+		$query->bind_param("is", $balance[$receiver_uname],  $receiver_uname);
+		$query->execute();
+		if ($query->errno != 0 || $query->affected_rows != 1) {
+			throw new Exception("ERROR: Update balance failed. " . $query->error);
+		}
+
+		$db->commit();
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+		$db->rollback();
+	}
+	return $query->errno;
+}
