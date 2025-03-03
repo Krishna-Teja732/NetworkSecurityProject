@@ -24,7 +24,16 @@ function handle_login(): void
 	$cookie_value = bin2hex(random_bytes(16));
 	$_SESSION[$cookie_value] = $username;
 	header("Location: " . HOME);
-	setcookie("session", $cookie_value, path: '/');
+	setcookie("session", $cookie_value, path: '/', secure: true, httponly: true);
+	exit();
+}
+
+function handle_user_logout(string $session_id)
+{
+	unset($_SESSION[$session_id]);
+	unset($_COOKIE["session"]);
+	setcookie("session", "", time() - 3600, path: '/');
+	header("Location: " . LOGIN);
 	exit();
 }
 

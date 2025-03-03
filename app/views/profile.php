@@ -13,22 +13,21 @@
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		<a class="navbar-brand" href="#">Website</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-			<span class="navbar-toggler-icon"></span>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarNav" style="list-style-type: none;">
-			<ul class="navbar-nav">
-				<li class="nav-item active">
+		<div class="" id="navbarNav" style="list-style-type: none;">
+			<ul class="navbar-nav" style="list-style-type:none;">
+				<li class="nav-item active p4">
 					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item p4">
 					<a class="nav-link" href="#">Features</a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item p4">
 					<a class="nav-link" href="#">Pricing</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link disabled" href="#">Disabled</a>
+				<li class="nav-item p4">
+					<form method="post" action="/api/logout-handler">
+						<input type="submit" value="Logout">
+					</form>
 				</li>
 			</ul>
 		</div>

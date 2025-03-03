@@ -12,6 +12,7 @@ const TRANSACTIONS = "/transactions";
 const LOGIN_HANDLER = "/api/login-handler";
 const SIGNUP_HANDLER = "/api/signup-handler";
 const PROFILE_PICTURE_UPDATE_HANDLER = "/api/update-profile-picture";
+const LOGOUT_HANDLER = "/api/logout-handler";
 
 # Paths that do not need authentication 
 const UNAUTHENTICATED_URL_LIST = [LOGIN, LOGIN_HANDLER, SIGNUP, SIGNUP_HANDLER];
