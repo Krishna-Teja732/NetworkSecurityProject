@@ -22,23 +22,26 @@ switch ($request_uri) {
 		require __DIR__ . "/views/signup.php";
 		exit();
 	case LOGIN_HANDLER:
-		handle_login();
-		exit();
+		if(
+			validate_signin_inputs($_POST['username'], $_POST['password'])
+		){
+			handle_login();
+			exit();
+		}
+		else{
+			header("Location: /login");
+        	exit();
+		}
+		
 	case SIGNUP_HANDLER:
 		if (
-			isset($_POST['username']) &&
-			isset($_POST['password']) &&
-			isset($_POST['confirm-password']) &&
-			isset($_POST['email']) &&
-			count(validate_signup_inputs($_POST['username'], $_POST['password'], $_POST['email'])) == 0 &&
-			handle_create_user($_POST['username'], $_POST['password'], $_POST['confirm-password'], $_POST['email'])
+			validate_signup_inputs($_POST['username'], $_POST['password'], $_POST['email']) &&
+			handle_create_user()
 		) {
 			header("Location: /login");
 			$session_id = session_id();
-			setcookie($session_id, "Signup succesfull for username: " . $_POST['username'], path: '/');
+			setcookie("signup_success", $_POST['username'], path: '/');
 			exit();
-
-
 		} else {
 			header("Location: /signup");
         	exit();

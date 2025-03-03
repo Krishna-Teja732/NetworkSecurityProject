@@ -5,82 +5,64 @@ function sanitize_input_string(string $input): string {
 }
 
 function validate_username(string $input): bool {
+    //Username must be Alphanumeric and can contain some special characters like @, ., -, _
     return preg_match('/^[a-zA-Z0-9@._-]+$/', $input);
 }
 
 
-function validate_signup_inputs(string $username, string $password, string $email): array {
-    $errors = [];
+function validate_signup_inputs(string $username, string $password, string $email): bool {
 
     // Sanitize inputs
     $username = sanitize_input_string($username);
-    $password = sanitize_input_string($password);
     $email = sanitize_input_string($email);
 
-    // Validate Username (Alphanumeric + @, ., -, _ and length 3-20)
-    if (!validate_username($username)) {
-        $errors[] = "Username must be alphanumeric and can contain @, ., -, _ (3-20 characters).";
+    // Validate inputs
+    if(validate_username($username) && 
+        // Password size should be greater than 2    
+        strlen($password) > 2 &&
+        // Email format validation
+        filter_var($email, FILTER_VALIDATE_EMAIL)){
+        return true;
     }
-
-    // Validate Password (Minimum 8 characters)
-    if (strlen($password) < 2) {
-        $errors[] = "Password must be at least 8 characters long.";
+    else{
+        return false;
     }
-
-    // Validate Email (Using filter_var)
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email format.";
-    }
-
-    return $errors; // Return an array of errors (empty if no errors)
 }
 
 
-function validate_signin_inputs(string $username, string $password): array {
-    $errors = [];
+function validate_signin_inputs(string $username, string $password): bool {
 
     // Sanitize inputs
     $username = sanitize_input_string($username);
-    $password = sanitize_input_string($password);
 
-    // Validate Username (Alphanumeric + @, ., -, _ and length 3-20)
-    if (!validate_username($username)) {
-        $errors[] = "Username must be alphanumeric and can contain @, ., -, _ (3-20 characters).";
+    // Validate inputs
+    if(validate_username($username) &&
+        // Password size should be greater than 2
+        strlen($password) > 2){
+        return true;
     }
-
-    // Validate Password (Minimum 8 characters)
-    if (strlen($password) < 8) {
-        $errors[] = "Password must be at least 8 characters long.";
+    else{
+        return false;
     }
-
-    // Return an array of errors (empty if no errors)
-    return $errors;
 }
 
 
-function validate_transactions_inputs(string $username1, string $username2, int $amount): array {
-    $errors = [];
+function validate_transactions_inputs(string $username1, string $username2, int $amount): bool {
 
     // Sanitize inputs
     $username1 = sanitize_input_string($username1);
     $username2 = sanitize_input_string($username2);
 
-    // Check if both usernames are the same
-    if ($username1 === $username2) {
-        $errors[] = "Sender and recipient usernames cannot be the same.";
-        return $errors;
+    // Validate inputs
+    if(($username1 === $username2) &&
+        validate_username($username1) && 
+        validate_username($username2) &&
+        // Trasaction amount must be greater than 0
+        filter_var($amount, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])){
+        return true;
     }
-
-    // Validate Username (Alphanumeric + @, ., -, _ and length 3-20)
-    if (!validate_username($username1) and !validate_username($username2)) {
-        $errors[] = "Username must be alphanumeric and can contain @, ., -, _ (3-20 characters).";
+    else{
+        return false;
     }
-
-    // Validate transaction amount (must be an integer greater than 0)
-    if (!filter_var($amount, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])) {
-        $errors[] = "Transaction amount must be a valid integer and greater than 0.";
-    }
-
-    // Return an array of errors
-    return $errors;
 }
+

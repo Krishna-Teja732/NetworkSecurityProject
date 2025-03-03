@@ -1,8 +1,9 @@
 <?php
-if (isset($_COOKIE[session_id()])) {
-    $cookie_value = $_COOKIE[session_id()];
+if (isset($_COOKIE["signup_success"])) {
+    $cookie_value = $_COOKIE["signup_success"];
 	// Display the message using a simple HTML alert box
-    echo "<script>alert('" . htmlspecialchars($cookie_value, ENT_QUOTES) . "');</script>";
+    echo "<script>alert('" . htmlspecialchars("Signup successful for username: " . $cookie_value, ENT_QUOTES) . "');</script>";
+	setcookie("signup_success", "", time() - 3600, path: '/');
 }
 ?>
 

@@ -30,15 +30,16 @@ function handle_login(): void
 
 
 // Create a new user
-function handle_create_user(string $username, string $password, string $confirm_password, string $email): bool
+function handle_create_user(): bool
 {
-	if (empty($username) || empty($password) || empty($confirm_password) || empty($email)) {
+	// DO we need to do an empty check for all the fields?????
+	if (!isset($_POST['username']) && !isset($_POST['password']) && !isset($_POST['confirm-password']) && !isset($_POST['email'])) {
 		return false;
 	}
-	if (strcmp($password, $confirm_password) != 0) {
+	if (strcmp($_POST['password'], $_POST['confirm-password']) != 0) {
 		return false;
 	}
-	return create_new_user($username, $email, $password) == 0;
+	return create_new_user($_POST['username'], $_POST['email'], $_POST['password']) == 0;
 }
 
 function handle_view_profile(string $username, bool $is_owner)
