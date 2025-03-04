@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 include_once __DIR__ . "/url-definitions.php";
 include_once __DIR__ . "/src/api.php";
-require_once __DIR__ . "/src/utils/input-sanatization-utils.php";
 
+
+# Get request URL and strip trailing '/' from request URL
 $request_uri = $_SERVER['REQUEST_URI'];
-# Strip trailing '/' from request uri
 if ($request_uri != '/' && substr($request_uri, -1, 1) == '/') {
 	$request_uri = substr($request_uri, 0, -1);
 }
@@ -26,30 +26,10 @@ switch ($request_uri) {
 		require __DIR__ . "/views/signup.php";
 		exit();
 	case LOGIN_HANDLER:
-		if(
-			validate_signin_inputs($_POST['username'], $_POST['password'])
-		){
-			handle_login();
-			exit();
-		}
-		else{
-			header("Location: /login");
-        	exit();
-		}
-		
+		handle_login();
+		exit();
 	case SIGNUP_HANDLER:
-		if (
-			validate_signup_inputs($_POST['username'], $_POST['password'], $_POST['email']) &&
-			handle_create_user()
-		) {
-			header("Location: /login");
-			$session_id = session_id();
-			setcookie("signup_success", $_POST['username'], path: '/');
-			exit();
-		} else {
-			header("Location: /signup");
-        	exit();
-		}
+		handle_create_user();
 		exit();
 	default:
 		# This deafult is used as a fallback eventhough the URL is checked at the beginning of this file 

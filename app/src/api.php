@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 include_once __DIR__ . "/utils/db-utils.php";
+include_once __DIR__ . "/utils/input-sanatization-utils.php";
 
 function handle_login(): void
 {
@@ -10,7 +11,10 @@ function handle_login(): void
 		header("Location: " . LOGIN);
 		exit();
 	}
-	#TODO: validate input fields
+	if (!validate_signin_inputs($_POST['username'], $_POST['password'])) {
+		header("Location: " . LOGIN);
+		exit();
+	}
 	$username = $_POST['username'];
 	$password = $_POST['password'];
 	$password_hash = get_user_password($username);
@@ -41,14 +45,34 @@ function handle_user_logout(string $session_id)
 // Create a new user
 function handle_create_user(): bool
 {
-	// DO we need to do an empty check for all the fields?????
+	# Check if all input attributes are set
 	if (!isset($_POST['username']) && !isset($_POST['password']) && !isset($_POST['confirm-password']) && !isset($_POST['email'])) {
 		return false;
 	}
-	if (strcmp($_POST['password'], $_POST['confirm-password']) != 0) {
-		return false;
+	$username = $_POST['username'];
+	$email = $_POST['email'];
+	$password = $_POST['password'];
+	$confirm_password = $_POST['confirm-password'];
+
+	# Redirect to signup on invalid inputs
+	if (
+		!validate_signup_inputs($username, $password, $email) ||
+		strcmp($password, $confirm_password) != 0
+	) {
+		header("Location: /signup");
+		exit();
 	}
-	return create_new_user($_POST['username'], $_POST['email'], $_POST['password']) == 0;
+
+	# TODO: Show message in frontend saying username alredy exists
+	if (!create_new_user($username, $email, $password) == 0) {
+		header("Location: /signup");
+		exit();
+	}
+
+	# User created, redirect to login
+	header("Location: /login");
+	setcookie("signup_success", $username, path: '/');
+	exit();
 }
 
 function handle_view_profile(string $username, bool $is_owner)
