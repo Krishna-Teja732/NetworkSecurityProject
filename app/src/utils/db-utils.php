@@ -79,7 +79,6 @@ function get_user_profile_info(string $username): array|null
 }
 
 
-# TODO: 
 # Home page displays, the username, balance and past transactions
 # Return format: associative array
 #	Keys - Value: 
@@ -87,10 +86,41 @@ function get_user_profile_info(string $username): array|null
 #		"balance" - balance in int format
 #		"transactions" - list of transactions
 #	Transactions array entry format:
-#		["Date": <Date of transaction>, "sender/receiver": <username>, "message": <transaction_message>, "amount": <+/-amount>]
+#		["transaction_time": <timestamp>, 
+#		"sender_username": <username>, 
+#		"receiver_username": <username>,
+#		"transaction_remark": <transaction_message>, 
+#		"amount": <+ve int>]
 function get_home_page_info(string $username): array|null
 {
 	$user_info = null;
+	try {
+		$db = get_db_connection();
+		$query = $db->prepare("select username, balance from users where username = ?;");
+		$query->bind_param("s", $username);
+		$query->execute();
+		$result = $query->get_result();
+		if ($result->num_rows != 1) {
+			return $username;
+		}
+		$user_balance = $result->fetch_assoc();
+
+		# Get all the transactions for the user
+		$query = $db->prepare(
+			"select transaction_time, sender_username, receiver_username, transaction_remark, amount_sent
+			from transactions where sender_username = ? or receiver_username = ?;"
+		);
+		$query->bind_param("ss", $username, $username);
+		$query->execute();
+		$result = $query->get_result();
+		if ($query->errno != 0 || !$result) {
+			return null;
+		}
+		$user_info = $user_balance;
+		$user_info['transactions'] = $result->fetch_all(MYSQLI_ASSOC);
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+	}
 	return $user_info;
 }
 
