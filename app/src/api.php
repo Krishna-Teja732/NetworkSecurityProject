@@ -146,7 +146,7 @@ function handle_update_profile_picture(string $username)
 	# create new file name
 	$new_file_name = bin2hex(random_bytes(12)) . ".png";
 	if (
-		!update_profile_picture($username, $new_file_name) ||
+		!update_user_profile($username, "profile_picture_path", $new_file_name) ||
 		!imagepng($image, join(DIRECTORY_SEPARATOR, [UPLOAD_DIR, $new_file_name]))
 	) {
 		header("Location: " . MY_PROFILE);

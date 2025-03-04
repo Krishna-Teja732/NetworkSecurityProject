@@ -78,6 +78,43 @@ function get_user_profile_info(string $username): array|null
 	return $user_info;
 }
 
+
+# TODO: 
+# Home page displays, the username, balance and past transactions
+# Return format: associative array
+#	Keys - Value: 
+#		"username" - username in string format
+#		"balance" - balance in int format
+#		"transactions" - list of transactions
+#	Transactions array entry format:
+#		["Date": <Date of transaction>, "sender/receiver": <username>, "message": <transaction_message>, "amount": <+/-amount>]
+function get_home_page_info(string $username): array|null
+{
+	$user_info = null;
+	return $user_info;
+}
+
+# Returns all the users with like $username_serach_query
+function get_all_users(string $username_search_query = ""): array|null
+{
+	$username_search_query = "%$username_search_query%";
+	$usernames = null;
+	try {
+		$db = get_db_connection();
+		$query = $db->prepare("select username from users where username like ?;");
+		$query->bind_param("s", $username_search_query);
+		$query->execute();
+		$result = $query->get_result();
+		if ($result->num_rows >= 0) {
+			$usernames = $result->fetch_all(MYSQLI_NUM);
+		}
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+	}
+
+	return $usernames;
+}
+
 function username_exists(string $username): bool
 {
 	$user_exists = false;
@@ -116,13 +153,21 @@ function get_profile_picture_path(string $username): string| null
 	return $profile_picture_path;
 }
 
-function update_profile_picture(string $username, string $new_picture_name): bool
+
+# Update profile, description, and email of a user
+#	$change_property valid values: "description, email, profile_picture_path"
+function update_user_profile(string $username, string $change_property, string $property_value): bool
 {
+	if (!in_array($change_property, ["description", "email", "profile_picture_path"])) {
+		syslog(LOG_ERR, "ERROR: using invalid user property in db update utils");
+		return false;
+	}
+	$update_query = "update users set $change_property = ? where username = ?";
 	$update_success = false;
 	try {
 		$db = get_db_connection();
-		$query = $db->prepare("update users set profile_picture_path = ? where username = ?");
-		$query->bind_param("ss", $new_picture_name, $username);
+		$query = $db->prepare($update_query);
+		$query->bind_param("ss", $property_value, $username);
 		$query->execute();
 		if ($query->errno == 0 && $query->affected_rows == 1) {
 			$update_success = true;
