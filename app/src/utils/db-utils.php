@@ -206,7 +206,11 @@ function create_new_transaction(string $sender_uname, string $receiver_uname, fl
 
 		# Add record to the transaction table
 		$transaction_id = random_bytes(16);
-		$query = $db->prepare("insert into transactions values (?, ?, ?, ?, ?)");
+		$query = $db->prepare(
+			"insert into transactions
+			(transaction_id, sender_username, receiver_username, amount_sent, transaction_remark) values 
+			(?, ?, ?, ?, ?)"
+		);
 		$query->bind_param("sssis", $transaction_id, $sender_uname, $receiver_uname, $amount, $description);
 		$query->execute();
 		if ($query->errno != 0 || $query->affected_rows != 1) {
