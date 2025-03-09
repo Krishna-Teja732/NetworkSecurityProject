@@ -1,4 +1,5 @@
 <?php include_once __DIR__ . "/../url-definitions.php"; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -66,7 +67,6 @@
     </div>
 
     <div class="profile-container">
-
         <div class="profile-title">PROFILE</div>
         <img class="profile-pic" src=<?php echo $data["profile_picture_path"] ?>>
         <?php if ($data["is_owner"]) { ?>
@@ -113,6 +113,31 @@
                 <input type="text" class="form-control form-control-plaintext" id="description" value="<?php echo $data["description"]; ?>" readonly>
             </div>
         <?php } ?>
+
+        <?php
+        if (isset($_SESSION["update-success"])) {
+            $status = $_SESSION["update-success"];
+            unset($_SESSION["update-success"]);
+        ?>
+            <button class="form-control btn btn-success mt-3 mb-3" disabled="true">
+                <?php echo $status; ?>
+            </button>
+        <?php
+        }
+        ?>
+
+        <?php
+        if (isset($_SESSION["update-error"])) {
+            $error = $_SESSION["update-error"];
+            unset($_SESSION["udpate-error"]);
+        ?>
+            <button class="form-control btn btn-danger mb-3 mt-3" disabled="true">
+                <?php echo $error ?>
+            </button>
+        <?php
+        }
+        ?>
+
 
 </body>
 

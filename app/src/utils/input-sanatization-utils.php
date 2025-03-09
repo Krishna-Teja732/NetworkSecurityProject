@@ -8,7 +8,7 @@ function sanitize_input_string(string $input): string
 function validate_username(string $input): bool
 {
     //Username must be Alphanumeric and can contain some special characters like @, ., -, _
-    return preg_match('/^[a-zA-Z0-9@._-]+$/', $input);
+    return $input != "" && preg_match('/^[a-zA-Z0-9@._-]+$/', $input);
 }
 
 

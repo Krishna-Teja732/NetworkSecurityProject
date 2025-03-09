@@ -38,6 +38,6 @@ switch ($request_uri) {
 		header("Location: " . HOME);
 		exit();
 	default:
-		header("Location: " . HOME);
+		http_response_code(404);
 		exit();
 }

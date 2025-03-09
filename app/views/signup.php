@@ -106,6 +106,19 @@
                     <h3>BANK NAME</h3>
                     <div class="image-placeholder"></div>
                 </div>
+
+                <?php
+                if (isset($_SESSION["signup-error"])) {
+                    $error = $_SESSION["signup-error"];
+                    unset($_SESSION["signup-error"]);
+                ?>
+                    <button class="form-control btn btn-danger mb-3 mt-3" disabled="true">
+                        <?php echo $error ?>
+                    </button>
+                <?php
+                }
+                ?>
+
                 <form method="post" action="/api/signup-handler">
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Username" name="username">

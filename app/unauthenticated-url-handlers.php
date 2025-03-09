@@ -29,7 +29,7 @@ switch ($request_uri) {
 		handle_login();
 		exit();
 	case SIGNUP_HANDLER:
-		handle_create_user();
+		handle_signup();
 		exit();
 	default:
 		# This deafult is used as a fallback eventhough the URL is checked at the beginning of this file 

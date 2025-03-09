@@ -1,18 +1,8 @@
-<?php
-if (isset($_COOKIE["signup_success"])) {
-    $cookie_value = $_COOKIE["signup_success"];
-    // Display the message using a simple HTML alert box
-    echo htmlspecialchars("Signup successful for username: " . $cookie_value, ENT_QUOTES);
-    setcookie("signup_success", "", time() - 3600, path: '/');
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <title>Bank Login Form</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f8f8;
@@ -47,11 +37,6 @@ if (isset($_COOKIE["signup_success"])) {
             /* Keeping the bank name & image shifted upwards */
         }
 
-        h3 {
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
 
         .image-placeholder {
             width: 80px;
@@ -104,6 +89,7 @@ if (isset($_COOKIE["signup_success"])) {
             text-decoration: underline;
         }
     </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -115,12 +101,36 @@ if (isset($_COOKIE["signup_success"])) {
                     <h3>BANK NAME</h3>
                     <div class="image-placeholder"></div>
                 </div>
+                <?php
+                if (isset($_SESSION["signup-success"])) {
+                    $username = $_SESSION["signup-success"];
+                    unset($_SESSION["signup-success"]);
+                ?>
+                    <button class="form-control btn btn-success mt-3 mb-3" disabled="true">
+                        <?php echo htmlspecialchars("Signup successful for username: " . $username, ENT_QUOTES); ?>
+                    </button>
+                <?php
+                }
+                ?>
+
+                <?php
+                if (isset($_SESSION["login-error"])) {
+                    $error = $_SESSION["login-error"];
+                    unset($_SESSION["login-error"]);
+                ?>
+                    <button class="form-control btn btn-danger mb-3 mt-3" disabled="true">
+                        <?php echo $error ?>
+                    </button>
+                <?php
+                }
+                ?>
+
                 <form method="post" action="/api/login-handler">
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="username" name="username">
+                        <input type="text" class="form-control" placeholder="Username" name="username">
                     </div>
                     <div class="form-group">
-                        <input type="password" class="form-control" placeholder="password" name="password">
+                        <input type="password" class="form-control" placeholder="Password" name="password">
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-custom">LOGIN</button>
@@ -136,47 +146,3 @@ if (isset($_COOKIE["signup_success"])) {
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
-<!-- <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-</head>
-<body>
-<div class="container mt-3">
-<h1>To enter our website please signup</h1>
-    <form action="/api/signup-handler" method="post">
-    <div class="form-group">
-        <label for="name">username</label>
-        <input type="text" name="name" class="form-control" id="name" aria-describedby="emailHelp">
-    </div>
-
-    <div class="form-group">
-        <label for="pass">Password</label>
-        <input type="password" name="pass" class="form-control" id="pass" aria-describedby="pass"> 
-    </div>
-
-    <div class="form-group">
-        <label for="cpass">Confirm Password</label>
-        <input type = "password" class="form-control" name="cpass" id="cpass" cols="30" rows="10"></input> 
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
-
-</body>
-</html> -->

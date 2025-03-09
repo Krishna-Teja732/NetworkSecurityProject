@@ -8,10 +8,12 @@ include_once __DIR__ . "/utils/input-sanatization-utils.php";
 function handle_login(): void
 {
 	if (!isset($_POST['username']) || !isset($_POST['password'])) {
+		$_SESSION["login-error"] = "Input fields cannot be empty";
 		header("Location: " . LOGIN);
 		exit();
 	}
 	if (!validate_signin_inputs($_POST['username'], $_POST['password'])) {
+		$_SESSION["login-error"] = "Invalid Credentials";
 		header("Location: " . LOGIN);
 		exit();
 	}
@@ -20,6 +22,7 @@ function handle_login(): void
 	$password_hash = get_user_password($username);
 
 	if ($password_hash == null or !password_verify($password, $password_hash)) {
+		$_SESSION["login-error"] = "Invalid Credentials";
 		header("Location: " . LOGIN);
 		exit();
 	}
@@ -43,11 +46,13 @@ function handle_user_logout(string $session_id)
 
 
 // Create a new user
-function handle_create_user(): bool
+function handle_signup(): bool
 {
 	# Check if all input attributes are set
 	if (!isset($_POST['username']) && !isset($_POST['password']) && !isset($_POST['confirm-password']) && !isset($_POST['email'])) {
-		return false;
+		$_SESSION["signup-error"] = "Input fields cannot be empty";
+		header("Location: " . SIGNUP);
+		exit();
 	}
 	$username = $_POST['username'];
 	$email = $_POST['email'];
@@ -59,18 +64,20 @@ function handle_create_user(): bool
 		!validate_signup_inputs($username, $password, $email) ||
 		strcmp($password, $confirm_password) != 0
 	) {
-		header("Location: /signup");
+		$_SESSION["signup-error"] = "Invalid credentials";
+		header("Location: " . SIGNUP);
 		exit();
 	}
 
 	if (!create_new_user($username, $email, $password) == 0) {
-		header("Location: /signup");
+		$_SESSION["signup-error"] = "Username already exists";
+		header("Location: " . SIGNUP);
 		exit();
 	}
 
 	# User created, redirect to login
-	header("Location: /login");
-	setcookie("signup_success", $username, path: '/');
+	header("Location: " . LOGIN);
+	$_SESSION["signup-success"] = $username;
 	exit();
 }
 
@@ -116,22 +123,38 @@ function handle_update_email(string $username)
 {
 
 	if (!isset($_POST['email']) || $_POST['email'] == '') {
+		$_SESSION["update-error"] = "Email cannot be empty";
 		header("Location: " . MY_PROFILE);
 		exit();
 	}
 	$email = sanitize_input_string($_POST['email']);
-	update_user_profile($username, "email", $email);
+	if (!($email = filter_var($email, FILTER_VALIDATE_EMAIL)) || !update_user_profile($username, "email", $email)) {
+		$_SESSION["update-error"] = "Email invalid/unchanged";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	unset($_SESSION["update-error"]);
+	$_SESSION["update-success"] = "Email updated";
 	header("Location: " . MY_PROFILE);
 }
 
 function handle_update_description(string $username)
 {
-	if (!isset($_POST['description'])) {
+	if (!isset($_POST['description']) || $_POST['description'] == '') {
+		$_SESSION["update-error"] = "Description cannot be empty";
 		header("Location: " . MY_PROFILE);
 		exit();
 	}
 	$description = sanitize_input_string($_POST['description']);
-	update_user_profile($username, "description", $description);
+	if (!update_user_profile($username, "description", $description)) {
+		$_SESSION["update-error"] = "Description unchanged/to long";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	unset($_SESSION["update-error"]);
+	$_SESSION["update-success"] = "Description updated";
 	header("Location: " . MY_PROFILE);
 }
 
@@ -151,6 +174,7 @@ const UPLOAD_DIR = "/var/www/data/profile-pictures";
 function handle_update_profile_picture(string $username)
 {
 	if (!isset($_FILES['profile-picture']['tmp_name']) || $_FILES['profile-picture']['error'] != 0) {
+		$_SESSION["update-error"] = "Empty profile picture/picture size exceeded 2MB";
 		header("Location: " . MY_PROFILE);
 		exit();
 	}
@@ -165,18 +189,21 @@ function handle_update_profile_picture(string $username)
 		!in_array($file_extension, $allowed_extensions) ||
 		!is_uploaded_file($temp_file_name)
 	) {
+		$_SESSION["update-error"] = "Invalid Image. Only png files are supported";
 		header("Location: " . MY_PROFILE);
 		exit();
 	}
 
 	$image = @imagecreatefrompng($temp_file_name);
 	if (!$image) {
-		echo "invalid image";
+		$_SESSION["update-error"] = "Invalid Image. Only png files are supported";
+		header("Location: " . MY_PROFILE);
 		exit();
 	}
 
 	$image = @imagescale($image, width: 250, height: 250);
 	if (!$image) {
+		$_SESSION["update-error"] = "Invalid Image";
 		header("Location: " . MY_PROFILE);
 		exit();
 	}
@@ -194,6 +221,7 @@ function handle_update_profile_picture(string $username)
 		!update_user_profile($username, "profile_picture_path", $new_file_name) ||
 		!imagepng($image, join(DIRECTORY_SEPARATOR, [UPLOAD_DIR, $new_file_name]))
 	) {
+		$_SESSION["update-error"] = "Invalid Image";
 		header("Location: " . MY_PROFILE);
 		exit();
 	}
@@ -205,5 +233,7 @@ function handle_update_profile_picture(string $username)
 		syslog(LOG_INFO, "WARN: old profile picture delete status: $status");
 	}
 
+	unset($_SESSION["update-error"]);
+	$_SESSION["update-success"] = "Profile Picture updated";
 	header("Location: " . MY_PROFILE);
 }
