@@ -63,7 +63,6 @@ function handle_create_user(): bool
 		exit();
 	}
 
-	# TODO: Show message in frontend saying username alredy exists
 	if (!create_new_user($username, $email, $password) == 0) {
 		header("Location: /signup");
 		exit();
@@ -79,7 +78,7 @@ function handle_view_profile(string $username, bool $is_owner)
 {
 	# Page to view other user's profile
 	if (is_null($data = get_user_profile_info($username))) {
-		require __DIR__ . "/../views/404.php";
+		http_response_code(404);
 	} else {
 		# To send the profile picture, there's an apache mod_rewrite rule to serve images directly
 		# any url starting with /picture/.*\.png will be served from ./data/profile-pictures/
@@ -89,6 +88,52 @@ function handle_view_profile(string $username, bool $is_owner)
 	}
 }
 
+function handle_view_home(string $username)
+{
+	$data = get_home_page_info($username);
+	$data["profile_picture_path"] = GET_PROFILE_PICTURE . $data["profile_picture_path"];
+
+	$transactions = [];
+	foreach ($data["transactions"] as $transaction) {
+		$formatted_transaction_row = $transaction;
+		unset($formatted_transaction_row["sender_username"]);
+		unset($formatted_transaction_row["receiver_username"]);
+		unset($formatted_transaction_row["amount_sent"]);
+
+		$formatted_transaction_row["username"] = $transaction["sender_username"] == $username ? $transaction["receiver_username"] : $transaction["sender_username"];
+		$amount_sent = $transaction["sender_username"] == $username ? -1 * $transaction["amount_sent"] : $transaction["amount_sent"];
+		$formatted_transaction_row["amount"] = floatval($amount_sent);
+
+		array_push($transactions, $formatted_transaction_row);
+	}
+
+
+	$data["transactions"] = $transactions;
+	require __DIR__ . "/../views/home.php";
+}
+
+function handle_update_email(string $username)
+{
+
+	if (!isset($_POST['email']) || $_POST['email'] == '') {
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+	$email = sanitize_input_string($_POST['email']);
+	update_user_profile($username, "email", $email);
+	header("Location: " . MY_PROFILE);
+}
+
+function handle_update_description(string $username)
+{
+	if (!isset($_POST['description'])) {
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+	$description = sanitize_input_string($_POST['description']);
+	update_user_profile($username, "description", $description);
+	header("Location: " . MY_PROFILE);
+}
 
 // Profile picture update
 # The following sanitization is performed on the uploaded file 
@@ -130,7 +175,7 @@ function handle_update_profile_picture(string $username)
 		exit();
 	}
 
-	$image = @imagescale($image, width: 100, height: 100);
+	$image = @imagescale($image, width: 250, height: 250);
 	if (!$image) {
 		header("Location: " . MY_PROFILE);
 		exit();

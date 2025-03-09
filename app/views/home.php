@@ -1,40 +1,100 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Home page</title>
-	<script src="/public/scripts/jquery-3.7.1.slim.min.js"></script>
-	<link href="public/css/bootstrap.min.css" rel="stylesheet">
-	<script src="public/scripts/bootstrap.min.js"></script>
+    <title>Home</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .profile-card {
+            background-color: #d1d1d1;
+            border-radius: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-card .profile-pic {
+            width: 80px;
+            height: 80px;
+            background-color: black;
+            border-radius: 50%;
+        }
+
+        .profile-details {
+            margin-left: 20px;
+            font-family: 'Georgia', serif;
+        }
+
+        .transactions-card {
+            background-color: #d1d1d1;
+            border-radius: 15px;
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        .transactions-card h5 {
+            text-align: center;
+            font-family: 'Georgia', serif;
+        }
+
+        .transaction-item {
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .transaction-item span {
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body>
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="#">Website</a>
-		<div class="" id="navbarNav" style="list-style-type: none;">
-			<ul class="navbar-nav" style="list-style-type:none;">
-				<li class="nav-item active p4">
-					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-				</li>
-				<li class="nav-item p4">
-					<a class="nav-link" href="#">Features</a>
-				</li>
-				<li class="nav-item p4">
-					<a class="nav-link" href="#">Pricing</a>
-				</li>
-				<li class="nav-item p4">
-					<form method="post" action="/api/logout-handler">
-						<input type="submit" value="Logout">
-					</form>
-				</li>
-			</ul>
-		</div>
-	</nav>
 
-	<div>
-	</div>
+    <div class="navbar-container">
+        <?php require __DIR__ . '/navbar.php'; ?>
+    </div>
+
+    <!-- Profile Card -->
+    <div class="container mt-3">
+        <div class="profile-card">
+            <img class="profile-pic" src=<?php echo $data["profile_picture_path"] ?>>
+            <div class="profile-details">
+                <div><?php echo $data["username"] ?></div>
+                <div> Balance: <?php echo $data["balance"] ?></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transactions History -->
+    <div class="container mt-3">
+        <div class="transactions-card">
+            <h5>TRANSACTIONS HISTORY</h5>
+            <div class="transaction-item">
+                <span>Date</span>
+                <span>Username</span>
+                <span>Message</span>
+                <span>Amount</span>
+            </div>
+            <?php foreach ($data["transactions"] as $transaction) { ?>
+                <div class="transaction-item">
+                    <span><?php echo $transaction["transaction_time"] ?></span>
+                    <span><?php echo $transaction["username"] ?></span>
+                    <span><?php echo $transaction["transaction_remark"] ?></span>
+                    <span><?php echo $transaction["amount"] ?></span>
+                </div>
+            <?php } ?>
+        </div>
+    </div>
 
 </body>
 

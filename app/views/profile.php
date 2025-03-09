@@ -1,56 +1,118 @@
-<!doctype html>
+<?php include_once __DIR__ . "/../url-definitions.php"; ?>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Profile</title>
-	<script src="/public/scripts/jquery-3.7.1.slim.min.js"></script>
-	<link href="/public/css/bootstrap.min.css" rel="stylesheet">
-	<script src="/public/scripts/bootstrap.min.js"></script>
+    <title>Profile Page</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar-container {
+            width: 100%;
+            background-color: white;
+        }
+
+        .profile-container {
+            background-color: #d1d1d1;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            width: 40%;
+            margin-top: 20px;
+        }
+
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            background-color: black;
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+        }
+
+        .profile-title {
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .edit-btn {
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #555;
+            padding: 0 10px;
+        }
+
+        .edit-btn:hover {
+            color: black;
+        }
+    </style>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="#">Website</a>
-		<div class="" id="navbarNav" style="list-style-type: none;">
-			<ul class="navbar-nav" style="list-style-type:none;">
-				<li class="nav-item active p4">
-					<a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-				</li>
-				<li class="nav-item p4">
-					<a class="nav-link" href="#">Features</a>
-				</li>
-				<li class="nav-item p4">
-					<a class="nav-link" href="#">Pricing</a>
-				</li>
-				<li class="nav-item p4">
-					<form method="post" action="/api/logout-handler">
-						<input type="submit" value="Logout">
-					</form>
-				</li>
-			</ul>
-		</div>
-	</nav>
 
-	<div>
-		<img src=<?php echo $data['profile_picture_path'] ?>>
+    <div class="navbar-container">
+        <?php require 'navbar.php'; ?>
+    </div>
 
-		<?php
-		if ($data['is_owner']) {
-		?>
-			<form method="post" action="/api/update-profile-picture" enctype="multipart/form-data">
-				<input name="profile-picture" type="file" required>
-				<input type="submit">
-			</form>
-		<?php
-		}
-		?>
+    <div class="profile-container">
 
-		<p>Username: <?php echo $data['username'] ?></p>
-		<p>Email: <?php echo $data['email'] ?></p>
-		<p>Description: <?php echo $data['description'] ?></p>
-	</div>
+        <div class="profile-title">PROFILE</div>
+        <img class="profile-pic" src=<?php echo $data["profile_picture_path"] ?>>
+        <?php if ($data["is_owner"]) { ?>
+            <div class="form-group">
+                <form action="<?php echo PROFILE_PICTURE_UPDATE_HANDLER ?>" method="post" enctype="multipart/form-data">
+                    <input type="file" class="form-control-file" name="profile-picture" required>
+                    <input type="submit" class="form-control btn btn-danger" value="Update Profile Picture">
+                </form>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" value="<?php echo $data["username"]; ?>" readonly>
+            </div>
+
+            <div class="form-group">
+                <form action="<?php echo EMAIL_UPDATE_HANDLER ?>" method="post">
+                    <label for="email">Email ID</label>
+                    <input type="email" class="form-control" name="email" id="email" value="<?php echo $data["email"]; ?>" required>
+                    <input type="submit" class="form-control btn btn-danger" value="Update Email">
+                </form>
+            </div>
+
+            <div class="form-group">
+                <form action="<?php echo DESCRIPTION_UPDATE_HANDLER ?>" method="post">
+                    <label for="description">Description</label>
+                    <input type="text" class="form-control" id="description" name="description" value="<?php echo $data["description"]; ?>" required>
+                    <input type="submit" class="form-control btn btn-danger" value="Update Description">
+                </form>
+            </div>
+        <?php } else { ?>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control form-control-plaintext" id="username" value="<?php echo $data["username"]; ?>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email ID</label>
+                <input type="email" class="form-control form-control-plaintext" id="email" value="<?php echo $data["email"]; ?>" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" class="form-control form-control-plaintext" id="description" value="<?php echo $data["description"]; ?>" readonly>
+            </div>
+        <?php } ?>
 
 </body>
 

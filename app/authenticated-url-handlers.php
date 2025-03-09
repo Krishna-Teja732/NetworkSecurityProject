@@ -13,13 +13,19 @@ if ($request_uri != '/' && substr($request_uri, -1, 1) == '/') {
 
 switch ($request_uri) {
 	case HOME:
-		require __DIR__ . "/views/home.php";
+		handle_view_home($session_username);
 		exit();
 	case MY_PROFILE:
 		handle_view_profile($session_username, is_owner: true);
 		exit();
 	case PROFILE_PICTURE_UPDATE_HANDLER:
 		handle_update_profile_picture($session_username);
+		exit();
+	case EMAIL_UPDATE_HANDLER:
+		handle_update_email($session_username);
+		exit();
+	case DESCRIPTION_UPDATE_HANDLER:
+		handle_update_description($session_username);
 		exit();
 	case str_starts_with($request_uri, OTHER_USER_PROFILE):
 		$view_username = substr($request_uri, mb_strlen("/profile/u/"));

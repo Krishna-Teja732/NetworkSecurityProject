@@ -20,7 +20,7 @@ function validate_signup_inputs(string $username, string $password, string $emai
     $email = sanitize_input_string($email);
 
     // Validate inputs
-    // Password size should be greater than 2    
+    // Password size should be greater than 2
     // Email format validation
     if (
         validate_username($username) &&

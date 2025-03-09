@@ -84,6 +84,7 @@ function get_user_profile_info(string $username): array|null
 #	Keys - Value: 
 #		"username" - username in string format
 #		"balance" - balance in int format
+#		"profile_picture_path" - profile picture path
 #		"transactions" - list of transactions
 #	Transactions array entry format:
 #		["transaction_time": <timestamp>, 
@@ -96,7 +97,7 @@ function get_home_page_info(string $username): array|null
 	$user_info = null;
 	try {
 		$db = get_db_connection();
-		$query = $db->prepare("select username, balance from users where username = ?;");
+		$query = $db->prepare("select username, profile_picture_path, balance from users where username = ?;");
 		$query->bind_param("s", $username);
 		$query->execute();
 		$result = $query->get_result();
