@@ -132,6 +132,7 @@
                     <div class="form-group">
                         <input type="password" class="form-control" placeholder="Password" name="password">
                     </div>
+                    <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
                     <div class="text-center">
                         <button type="submit" class="btn btn-custom">LOGIN</button>
                     </div>

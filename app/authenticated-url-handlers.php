@@ -11,11 +11,14 @@ if ($request_uri != '/' && substr($request_uri, -1, 1) == '/') {
 	$request_uri = substr($request_uri, 0, -1);
 }
 
+
 switch ($request_uri) {
 	case HOME:
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		handle_view_home($session_username);
 		exit();
 	case MY_PROFILE:
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		handle_view_profile($session_username, is_owner: true);
 		exit();
 	case PROFILE_PICTURE_UPDATE_HANDLER:
@@ -28,6 +31,7 @@ switch ($request_uri) {
 		handle_update_description($session_username);
 		exit();
 	case str_starts_with($request_uri, OTHER_USER_PROFILE):
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		$view_username = substr($request_uri, mb_strlen("/profile/u/"));
 		handle_view_profile($view_username, is_owner: false);
 		exit();
@@ -35,6 +39,7 @@ switch ($request_uri) {
 		handle_user_logout($session_id);
 		exit();
 	case in_array($request_uri, UNAUTHENTICATED_URL_LIST):
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		header("Location: " . HOME);
 		exit();
 	default:

@@ -7,6 +7,10 @@ include_once __DIR__ . "/utils/input-sanatization-utils.php";
 
 function handle_login(): void
 {
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . LOGIN);
+		exit();
+	}
 	if (!isset($_POST['username']) || !isset($_POST['password'])) {
 		$_SESSION["login-error"] = "Input fields cannot be empty";
 		header("Location: " . LOGIN);
@@ -37,6 +41,10 @@ function handle_login(): void
 
 function handle_user_logout(string $session_id)
 {
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . HOME);
+		exit();
+	}
 	unset($_SESSION[$session_id]);
 	unset($_COOKIE["session"]);
 	setcookie("session", "", time() - 3600, path: '/');
@@ -48,6 +56,10 @@ function handle_user_logout(string $session_id)
 // Create a new user
 function handle_signup(): bool
 {
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . SIGNUP);
+		exit();
+	}
 	# Check if all input attributes are set
 	if (!isset($_POST['username']) && !isset($_POST['password']) && !isset($_POST['confirm-password']) && !isset($_POST['email'])) {
 		$_SESSION["signup-error"] = "Input fields cannot be empty";
@@ -121,7 +133,10 @@ function handle_view_home(string $username)
 
 function handle_update_email(string $username)
 {
-
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
 	if (!isset($_POST['email']) || $_POST['email'] == '') {
 		$_SESSION["update-error"] = "Email cannot be empty";
 		header("Location: " . MY_PROFILE);
@@ -141,6 +156,10 @@ function handle_update_email(string $username)
 
 function handle_update_description(string $username)
 {
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
 	if (!isset($_POST['description']) || $_POST['description'] == '') {
 		$_SESSION["update-error"] = "Description cannot be empty";
 		header("Location: " . MY_PROFILE);
@@ -173,6 +192,10 @@ function handle_update_description(string $username)
 const UPLOAD_DIR = "/var/www/data/profile-pictures";
 function handle_update_profile_picture(string $username)
 {
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
 	if (!isset($_FILES['profile-picture']['tmp_name']) || $_FILES['profile-picture']['error'] != 0) {
 		$_SESSION["update-error"] = "Empty profile picture/picture size exceeded 2MB";
 		header("Location: " . MY_PROFILE);

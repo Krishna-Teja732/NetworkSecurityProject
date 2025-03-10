@@ -20,9 +20,11 @@ if (!in_array($request_uri, UNAUTHENTICATED_URL_LIST)) {
 
 switch ($request_uri) {
 	case LOGIN:
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		require __DIR__ . "/views/login.php";
 		exit();
 	case SIGNUP:
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		require __DIR__ . "/views/signup.php";
 		exit();
 	case LOGIN_HANDLER:
@@ -33,6 +35,7 @@ switch ($request_uri) {
 		exit();
 	default:
 		# This deafult is used as a fallback eventhough the URL is checked at the beginning of this file 
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		header("Location: " . LOGIN);
 		exit();
 }

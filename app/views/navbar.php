@@ -37,7 +37,18 @@
             flex-grow: 1;
         }
 
-        .nav-center a {
+        .logout {
+            background: none;
+            color: inherit;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            outline: inherit;
+        }
+
+        .nav-center a,
+        .logout {
             text-decoration: none;
             color: black;
             margin: 0 15px;
@@ -78,10 +89,13 @@
             <span class="bank-name">BANK NAME</span>
         </div>
         <div class="nav-center">
-            <a href="/home" class="nav-active">Home</a>
+            <a href="/home">Home</a>
             <a href="/transfer_money">Transfer Money</a>
             <a href="/profile">Profile</a>
-            <a href="/api/logout-handler">Logout</a>
+            <form method="post" action="/api/logout-handler">
+                <input class="logout" type="submit" Value="Logout">
+                <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
+            </form>
         </div>
     </nav>
 
