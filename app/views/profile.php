@@ -95,7 +95,7 @@
             <div class="form-group">
                 <form action="<?php echo DESCRIPTION_UPDATE_HANDLER ?>" method="post">
                     <label for="description">Description</label>
-                    <input type="text" class="form-control" id="description" name="description" value="<?php echo $data["description"]; ?>" required>
+                    <textarea type="text" class="form-control" id="description" name="description" rows="4"> <?php echo $data["description"]; ?></textarea>
                     <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
                     <input type="submit" class="form-control btn btn-danger" value="Update Description">
                 </form>

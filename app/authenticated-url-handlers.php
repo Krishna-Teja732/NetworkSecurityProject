@@ -39,7 +39,6 @@ switch ($request_uri) {
 		handle_user_logout($session_id);
 		exit();
 	case in_array($request_uri, UNAUTHENTICATED_URL_LIST):
-		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		header("Location: " . HOME);
 		exit();
 	default:

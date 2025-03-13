@@ -12,19 +12,17 @@ if ($request_uri != '/' && substr($request_uri, -1, 1) == '/') {
 	$request_uri = substr($request_uri, 0, -1);
 }
 
-# Redirect to login for invalid URL 
-if (!in_array($request_uri, UNAUTHENTICATED_URL_LIST)) {
-	header("Location: " . LOGIN);
-	exit();
+
+# Generate a CSRF token only if user requested LOGIN or SIGNUP page
+if (in_array($request_uri, [LOGIN, SIGNUP])) {
+	$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 }
 
 switch ($request_uri) {
 	case LOGIN:
-		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		require __DIR__ . "/views/login.php";
 		exit();
 	case SIGNUP:
-		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		require __DIR__ . "/views/signup.php";
 		exit();
 	case LOGIN_HANDLER:
@@ -34,8 +32,6 @@ switch ($request_uri) {
 		handle_signup();
 		exit();
 	default:
-		# This deafult is used as a fallback eventhough the URL is checked at the beginning of this file 
-		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
-		header("Location: " . LOGIN);
+		http_response_code(404);
 		exit();
 }

@@ -7,6 +7,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 function get_db_connection(): mysqli|null
 {
 	$db = null;
+	#TODO: Replace the getenv with hardcoded values. (in some cases, the getenv() function returns a different value and not the value present in the .env file)
 	try {
 		$db = new mysqli(getenv('MYSQL_HOSTNAME'), getenv('MYSQL_USER'), getenv('MYSQL_PASSWORD'), getenv('MYSQL_DATABASE'));
 	} catch (mysqli_sql_exception $e) {

@@ -103,11 +103,10 @@
                 </div>
                 <?php
                 if (isset($_SESSION["signup-success"])) {
-                    $username = $_SESSION["signup-success"];
                     unset($_SESSION["signup-success"]);
                 ?>
                     <button class="form-control btn btn-success mt-3 mb-3" disabled="true">
-                        <?php echo htmlspecialchars("Signup successful for username: " . $username, ENT_QUOTES); ?>
+                        <?php echo htmlspecialchars("Signup successful"); ?>
                     </button>
                 <?php
                 }
