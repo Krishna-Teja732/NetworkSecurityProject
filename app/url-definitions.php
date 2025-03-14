@@ -6,7 +6,8 @@ const SIGNUP = "/signup";
 const HOME = "/home";
 const MY_PROFILE = "/profile";
 const OTHER_USER_PROFILE = "/profile/u/";
-const TRANSACTIONS = "/transactions";
+const SEARCH_USERS = "/users";
+const TRANSFER = "/transfer";
 
 # API paths
 const SIGNUP_HANDLER = "/api/signup-handler";
@@ -16,6 +17,7 @@ const PROFILE_PICTURE_UPDATE_HANDLER = "/api/update-profile-picture";
 const EMAIL_UPDATE_HANDLER = "/api/update-email";
 const DESCRIPTION_UPDATE_HANDLER  = "/api/update-description";
 const GET_PROFILE_PICTURE = "/picture/";
+const CREATE_TRANSACTION = "/api/create-transaction";
 
 # Paths that do not need authentication 
 const UNAUTHENTICATED_URL_LIST = [LOGIN, LOGIN_HANDLER, SIGNUP, SIGNUP_HANDLER];

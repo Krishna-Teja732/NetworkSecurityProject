@@ -260,3 +260,45 @@ function handle_update_profile_picture(string $username)
 	$_SESSION["update-success"] = "Profile Picture updated";
 	header("Location: " . MY_PROFILE);
 }
+
+
+function handle_search_users()
+{
+	$search_username = array_key_exists('username', $_GET) ? $_GET['username'] : '';
+	$search_username = validate_username($search_username) ? sanitize_input_string($search_username) : '';
+	$data['search-query'] = $search_username;
+	if (($users_list = get_all_users($search_username)) != null) {
+		$data['users'] = $users_list;
+	}
+	require __DIR__ . "/../views/search_users.php";
+}
+
+
+function handle_create_transaction(string $current_user)
+{
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . TRANSFER);
+		exit();
+	}
+	if (!isset($_POST['receiver-username']) || !isset($_POST['amount']) || !isset($_POST['remark'])) {
+		$_SESSION["transfer-error"] = "Transfer Failed: Invalid Username/Amount";
+		header("Location: " . TRANSFER);
+		exit();
+	}
+	$receiver_username = $_POST['receiver-username'];
+	$amount = $_POST['amount'];
+	$remark = sanitize_input_string($_POST['remark']);
+	if (!validate_transactions_inputs($receiver_username, $current_user, $amount)) {
+		$_SESSION["transfer-error"] = "Transfer Failed: Invalid Username/Amount";
+		header("Location: " . TRANSFER);
+		exit();
+	}
+
+	$errno = create_new_transaction($current_user, $receiver_username, intval($amount), $remark);
+	if ($errno == 0) {
+		$_SESSION["transfer-success"] = "Transfer success";
+	} else {
+		$_SESSION["transfer-error"] = "Transfer Failed: " . TRANSACTION_ERRORS[$errno];
+	}
+	header("Location: " . TRANSFER);
+}

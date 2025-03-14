@@ -110,7 +110,7 @@ function get_home_page_info(string $username): array|null
 		# Get all the transactions for the user
 		$query = $db->prepare(
 			"select transaction_time, sender_username, receiver_username, transaction_remark, amount_sent
-			from transactions where sender_username = ? or receiver_username = ?;"
+			from transactions where sender_username = ? or receiver_username = ? order by transaction_time desc;"
 		);
 		$query->bind_param("ss", $username, $username);
 		$query->execute();
@@ -138,7 +138,7 @@ function get_all_users(string $username_search_query = ""): array|null
 		$query->execute();
 		$result = $query->get_result();
 		if ($result->num_rows >= 0) {
-			$usernames = $result->fetch_all(MYSQLI_NUM);
+			$usernames = array_column($result->fetch_all(MYSQLI_NUM), 0);
 		}
 	} catch (Exception $e) {
 		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
@@ -210,6 +210,8 @@ function update_user_profile(string $username, string $change_property, string $
 	return $update_success;
 }
 
+
+const TRANSACTION_ERRORS = [1 => "Invalid Username", 1406 => "Remark too long",  3819 => "Insufficient Balance"];
 function create_new_transaction(string $sender_uname, string $receiver_uname, float $amount, string $description): int
 {
 	try {
@@ -222,7 +224,7 @@ function create_new_transaction(string $sender_uname, string $receiver_uname, fl
 		$query->execute();
 		$result = $query->get_result();
 		if ($query->errno != 0 || $result->num_rows != 2) {
-			throw new Exception("ERROR: Lock rows in transaction failed. " . $query->error);
+			return 1;
 		}
 
 		# Store the sender and receiver balance
@@ -246,7 +248,7 @@ function create_new_transaction(string $sender_uname, string $receiver_uname, fl
 		$query->bind_param("sssis", $transaction_id, $sender_uname, $receiver_uname, $amount, $description);
 		$query->execute();
 		if ($query->errno != 0 || $query->affected_rows != 1) {
-			throw new Exception("ERROR: Insert transation record failed. " . $query->error);
+			throw new Exception("ERROR: Insert Transaction failed. " . $query->errno);
 		}
 
 		# Update the balance
@@ -254,7 +256,7 @@ function create_new_transaction(string $sender_uname, string $receiver_uname, fl
 		$query->bind_param("is", $balance[$sender_uname], $sender_uname);
 		$query->execute();
 		if ($query->errno != 0 || $query->affected_rows != 1) {
-			throw new Exception("ERROR: Update balance failed. " . $query->error);
+			throw new Exception("ERROR: Update balance failed. " . $query->errno);
 		}
 		$query->bind_param("is", $balance[$receiver_uname],  $receiver_uname);
 		$query->execute();

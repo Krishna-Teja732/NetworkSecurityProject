@@ -21,6 +21,21 @@ switch ($request_uri) {
 		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
 		handle_view_profile($session_username, is_owner: true);
 		exit();
+	case str_starts_with($request_uri, OTHER_USER_PROFILE):
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
+		$view_username = substr($request_uri, mb_strlen("/profile/u/"));
+		handle_view_profile($view_username, is_owner: false);
+		exit();
+	case str_starts_with($request_uri, SEARCH_USERS):
+		handle_search_users();
+		exit();
+	case TRANSFER:
+		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
+		require __DIR__ . "/views/transfer.php";
+		exit();
+	case LOGOUT_HANDLER:
+		handle_user_logout($session_id);
+		exit();
 	case PROFILE_PICTURE_UPDATE_HANDLER:
 		handle_update_profile_picture($session_username);
 		exit();
@@ -30,13 +45,8 @@ switch ($request_uri) {
 	case DESCRIPTION_UPDATE_HANDLER:
 		handle_update_description($session_username);
 		exit();
-	case str_starts_with($request_uri, OTHER_USER_PROFILE):
-		$_SESSION['csrf-token'] = bin2hex(random_bytes(32));
-		$view_username = substr($request_uri, mb_strlen("/profile/u/"));
-		handle_view_profile($view_username, is_owner: false);
-		exit();
-	case LOGOUT_HANDLER:
-		handle_user_logout($session_id);
+	case CREATE_TRANSACTION:
+		handle_create_transaction($session_username);
 		exit();
 	case in_array($request_uri, UNAUTHENTICATED_URL_LIST):
 		header("Location: " . HOME);

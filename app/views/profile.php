@@ -113,7 +113,7 @@
 
             <div class="form-group">
                 <label for="description">Description</label>
-                <input type="text" class="form-control form-control-plaintext" id="description" value="<?php echo $data["description"]; ?>" readonly>
+                <textarea type="text" class="form-control form-control-plaintext" id="description" name="description" rows="4" readonly> <?php echo $data["description"]; ?></textarea>
             </div>
         <?php } ?>
 

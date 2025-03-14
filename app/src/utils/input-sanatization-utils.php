@@ -7,8 +7,8 @@ function sanitize_input_string(string $input): string
 
 function validate_username(string $input): bool
 {
-    //Username must be Alphanumeric and can contain some special characters like @, ., -, _
-    return $input != "" && preg_match('/^[a-zA-Z0-9@._-]+$/', $input);
+    //Username must be Alphanumeric and can contain special character _
+    return $input != "" && preg_match('/^[a-zA-Z0-9_]+$/', $input);
 }
 
 
@@ -50,18 +50,15 @@ function validate_signin_inputs(string $username, string $password): bool
 }
 
 
-function validate_transactions_inputs(string $username1, string $username2, int $amount): bool
+function validate_transactions_inputs(string $receiver_username, string $sender_username, string $amount): bool
 {
-
-    // Sanitize inputs
-    $username1 = sanitize_input_string($username1);
-    $username2 = sanitize_input_string($username2);
-
     // Validate inputs
-    if (($username1 === $username2) &&
-        validate_username($username1) &&
-        validate_username($username2) &&
+    if (
+        $receiver_username != $sender_username &&
+        validate_username($receiver_username) &&
+        validate_username($sender_username) &&
         // Trasaction amount must be greater than 0
+        is_numeric($amount) &&
         filter_var($amount, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])
     ) {
         return true;

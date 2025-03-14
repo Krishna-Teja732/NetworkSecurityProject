@@ -1,3 +1,7 @@
+<?php
+include_once __DIR__ . "/../url-definitions.php";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -89,12 +93,13 @@
             <span class="bank-name">BANK NAME</span>
         </div>
         <div class="nav-center">
-            <a href="/home">Home</a>
-            <a href="/transfer_money">Transfer Money</a>
-            <a href="/profile">Profile</a>
-            <form method="post" action="/api/logout-handler">
+            <a href="<?= HOME ?> ">Home</a>
+            <a href="<?= SEARCH_USERS ?>">Search Users</a>
+            <a href="<?= TRANSFER ?>">Transfer</a>
+            <a href="<?= MY_PROFILE ?>">Profile</a>
+            <form method="post" action="<?= LOGOUT_HANDLER ?>">
                 <input class="logout" type="submit" Value="Logout">
-                <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
+                <input type="hidden" name="csrf-token" value="<?= $_SESSION['csrf-token'] ?>">
             </form>
         </div>
     </nav>
