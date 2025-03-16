@@ -32,6 +32,6 @@ switch ($request_uri) {
 		handle_signup();
 		exit();
 	default:
-		http_response_code(404);
+		header("Location: " . LOGIN);
 		exit();
 }

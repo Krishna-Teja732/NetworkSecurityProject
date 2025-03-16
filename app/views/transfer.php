@@ -67,15 +67,15 @@
 
 	<div class="profile-container">
 		<div class="form-group">
-			<form action="<?php echo CREATE_TRANSACTION ?>" method="post">
-				<label for="username">Receiver Username</label>
-				<input type="text" class="form-control" id="username" name="receiver-username">
-				<label for="amount">Amount</label>
-				<input type="number" class="form-control" id="amount" name="amount">
-				<label for="remark">Remark</label>
-				<textarea type="text" class="form-control" id="remark" name="remark" rows="4" placeholder="Remarks"></textarea>
+			<form action="<?= CREATE_TRANSACTION ?>" method="post">
+				<label for="username" class="fs-5 fw-bold">Receiver Username</label>
+				<input type="text" class="form-control" id="username" name="receiver-username" required>
+				<label type="number" class="mt-3 fs-5 fw-bold" for="amount">Amount</label>
+				<input class="form-control" id="amount" name="amount" type="number" min="1" required>
+				<label class="mt-3 fs-5 fw-bold" for="remark">Remark</label>
+				<textarea type="text" class="form-control" id="remark" name="remark" rows="4" maxlength="200"></textarea>
 				<input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
-				<input type="submit" class="form-control btn btn-danger" value="Send Amount">
+				<input type="submit" class="form-control btn btn-danger mt-3" value="Send Amount">
 			</form>
 		</div>
 

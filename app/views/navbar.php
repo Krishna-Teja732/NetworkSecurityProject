@@ -8,8 +8,7 @@ include_once __DIR__ . "/../url-definitions.php";
 <head>
     <style>
         .navbar-custom {
-            background-color: #f8f9fa;
-            /* Light grey background */
+            background-color: #d1d1d1;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -59,13 +58,16 @@ include_once __DIR__ . "/../url-definitions.php";
             padding: 5px 10px;
             transition: background-color 0.3s ease;
             font-family: 'Georgia', serif;
-            font-weight: normal;
-            /* No bold */
-            font-size: 18px;
         }
 
         .nav-center a:hover {
             background-color: rgba(0, 0, 0, 0.1);
+            /* Light hover effect */
+            border-radius: 5px;
+        }
+
+        .nav-active {
+            background-color: rgba(0, 0, 0, 0.2);
             /* Light hover effect */
             border-radius: 5px;
         }
@@ -87,16 +89,35 @@ include_once __DIR__ . "/../url-definitions.php";
 
 <body>
 
-    <nav class="navbar navbar-custom">
+    <nav class="navbar-custom">
         <div class="logo-container">
-            <div class="circle logo"></div>
-            <span class="bank-name">BANK NAME</span>
+            <span class="bank-name fs-3">Team 6</span>
         </div>
         <div class="nav-center">
-            <a href="<?= HOME ?> ">Home</a>
-            <a href="<?= SEARCH_USERS ?>">Search Users</a>
-            <a href="<?= TRANSFER ?>">Transfer</a>
-            <a href="<?= MY_PROFILE ?>">Profile</a>
+            <a <?php if ($_SERVER['REQUEST_URI'] == HOME) {
+                ?>
+                class="fw-bolder nav-active"
+                <?php
+                } ?>
+                href="<?= HOME ?>">Home</a>
+            <a <?php if ($_SERVER['REQUEST_URI'] == SEARCH_USERS) {
+                ?>
+                class="fw-bolder nav-active"
+                <?php
+                } ?>
+                href="<?= SEARCH_USERS ?>">Search Users</a>
+            <a <?php if ($_SERVER['REQUEST_URI'] == TRANSFER) {
+                ?>
+                class="fw-bolder nav-active"
+                <?php
+                } ?>
+                href="<?= TRANSFER ?>">Transfer</a>
+            <a <?php if ($_SERVER['REQUEST_URI'] == MY_PROFILE) {
+                ?>
+                class="fw-bolder nav-active"
+                <?php
+                } ?>
+                href="<?= MY_PROFILE ?>">Profile</a>
             <form method="post" action="<?= LOGOUT_HANDLER ?>">
                 <input class="logout" type="submit" Value="Logout">
                 <input type="hidden" name="csrf-token" value="<?= $_SESSION['csrf-token'] ?>">

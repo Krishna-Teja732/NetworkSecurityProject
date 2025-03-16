@@ -89,10 +89,10 @@
                 <?php if ($data['search-query'] != '') {
                     echo "value=" .  $data['search-query'];
                 }  ?>
-                placeholder="🔍 Search Contact">
+                placeholder="🔍 Search Users">
         </form>
 
-        <h5>All Contacts</h5>
+        <h5>All Users</h5>
         <div class="contact-list">
             <?php
             if (!isset($data["users"])) {

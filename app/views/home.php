@@ -69,18 +69,18 @@
 
     <!-- Transactions History -->
     <div class="transactions-card container mt-3">
-        <h5>TRANSACTIONS HISTORY</h5>
+        <h5 class="m-3 fw-bold">TRANSACTIONS HISTORY</h5>
         <div class="row transaction-item p-2 m-2 text-center">
             <div class="col fs-5 fw-bold">Date</div>
             <div class="col fs-5 fw-bold">Username</div>
-            <div class="col fs-5 fw-bold">Message</div>
+            <div class="col fs-5 fw-bold">Remark</div>
             <div class="col fs-5 fw-bold">Amount</div>
         </div>
         <?php foreach ($data["transactions"] as $transaction) { ?>
             <div class="row transaction-item p-2 m-2 text-center">
                 <div class="col align-self-center"><?php echo $transaction["transaction_time"] ?></div>
                 <div class="col align-self-center"><?php echo $transaction["username"] ?></div>
-                <div class="col align-self-center"><?php echo $transaction["transaction_remark"] ?></div>
+                <div class="col align-self-center text-break"><?php echo $transaction["transaction_remark"] ?></div>
                 <div class="col align-self-center"><?php echo $transaction["amount"] ?></div>
             </div>
         <?php } ?>

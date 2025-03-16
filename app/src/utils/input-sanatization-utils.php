@@ -8,7 +8,7 @@ function sanitize_input_string(string $input): string
 function validate_username(string $input): bool
 {
     //Username must be Alphanumeric and can contain special character _
-    return $input != "" && preg_match('/^[a-zA-Z0-9_]+$/', $input);
+    return preg_match('/^[a-zA-Z0-9_]+$/', $input);
 }
 
 
@@ -24,7 +24,7 @@ function validate_signup_inputs(string $username, string $password, string $emai
     // Email format validation
     if (
         validate_username($username) &&
-        strlen($password) > 2 &&
+        strlen($password) > 7 &&
         filter_var($email, FILTER_VALIDATE_EMAIL)
     ) {
         return true;

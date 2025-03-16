@@ -10,7 +10,7 @@
         }
 
         .outer-box {
-            width: 400px;
+            width: 50%;
             /* Increased width */
             height: 520px;
             /* Increased height */
@@ -25,7 +25,7 @@
         }
 
         .inner-form {
-            width: 280px;
+            width: 90%;
             /* Keep inner form same width */
             text-align: center;
             position: relative;
@@ -99,9 +99,12 @@
         <div class="outer-box">
             <div class="inner-form">
                 <div class="top-section">
-                    <h3>BANK NAME</h3>
-                    <div class="image-placeholder"></div>
+                    <h3>Team 6</h3>
                 </div>
+                <div class="top-section">
+                    <h4>Login</h4>
+                </div>
+
                 <?php
                 if (isset($_SESSION["signup-success"])) {
                     unset($_SESSION["signup-success"]);
@@ -126,15 +129,15 @@
                 ?>
 
                 <form method="post" action="/api/login-handler">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Username" name="username">
+                    <div class="form-group m-2">
+                        <input type="text" class="form-control" placeholder="Username" name="username" pattern="^[a-zA-Z0-9_]+" required>
                     </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" placeholder="Password" name="password">
+                    <div class="form-group m-2">
+                        <input type="password" class="form-control mt-2" placeholder="Password" name="password" required>
                     </div>
                     <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-custom">LOGIN</button>
+                    <div class="text-center m-2">
+                        <button type="submit" class="btn btn-success">LOGIN</button>
                     </div>
                 </form>
                 <div class="register-text">
