@@ -3,7 +3,6 @@
 
 <head>
     <title>Home</title>
-    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
     <style>
         body {
             background-color: #f8f9fa;
@@ -25,7 +24,6 @@
         }
 
         .profile-details {
-            margin-left: 20px;
             font-family: 'Georgia', serif;
         }
 
@@ -44,18 +42,10 @@
         .transaction-item {
             background-color: white;
             border-radius: 10px;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .transaction-item span {
-            font-family: 'Georgia', serif;
-            font-size: 14px;
         }
     </style>
+
+    <link href="/public/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -65,35 +55,35 @@
     </div>
 
     <!-- Profile Card -->
-    <div class="container mt-3">
-        <div class="profile-card">
-            <img class="profile-pic" src=<?php echo $data["profile_picture_path"] ?>>
-            <div class="profile-details">
-                <div><?php echo $data["username"] ?></div>
-                <div> Balance: <?php echo $data["balance"] ?></div>
+    <div class="profile-card container mt-3">
+        <div class="profile-details container">
+            <div class="row">
+                <div class="col-md-auto align-self-center">
+                    <img class="profile-pic" src=<?php echo $data["profile_picture_path"] ?>>
+                </div>
+                <div class="col fs-4 fw-bold align-self-center">Username: <?php echo $data["username"] ?></div>
+                <div class="col fs-4 fw-bold align-self-center">Balance: <?php echo $data["balance"] ?></div>
             </div>
         </div>
     </div>
 
     <!-- Transactions History -->
-    <div class="container mt-3">
-        <div class="transactions-card">
-            <h5>TRANSACTIONS HISTORY</h5>
-            <div class="transaction-item">
-                <span>Date</span>
-                <span>Username</span>
-                <span>Message</span>
-                <span>Amount</span>
-            </div>
-            <?php foreach ($data["transactions"] as $transaction) { ?>
-                <div class="transaction-item">
-                    <span><?php echo $transaction["transaction_time"] ?></span>
-                    <span><?php echo $transaction["username"] ?></span>
-                    <span><?php echo $transaction["transaction_remark"] ?></span>
-                    <span><?php echo $transaction["amount"] ?></span>
-                </div>
-            <?php } ?>
+    <div class="transactions-card container mt-3">
+        <h5>TRANSACTIONS HISTORY</h5>
+        <div class="row transaction-item p-2 m-2 text-center">
+            <div class="col fs-5 fw-bold">Date</div>
+            <div class="col fs-5 fw-bold">Username</div>
+            <div class="col fs-5 fw-bold">Message</div>
+            <div class="col fs-5 fw-bold">Amount</div>
         </div>
+        <?php foreach ($data["transactions"] as $transaction) { ?>
+            <div class="row transaction-item p-2 m-2 text-center">
+                <div class="col align-self-center"><?php echo $transaction["transaction_time"] ?></div>
+                <div class="col align-self-center"><?php echo $transaction["username"] ?></div>
+                <div class="col align-self-center"><?php echo $transaction["transaction_remark"] ?></div>
+                <div class="col align-self-center"><?php echo $transaction["amount"] ?></div>
+            </div>
+        <?php } ?>
     </div>
 
 </body>

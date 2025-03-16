@@ -56,8 +56,8 @@
             color: black;
         }
     </style>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" crossorigin="anonymous"></script>
+
+    <link href="/public/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>

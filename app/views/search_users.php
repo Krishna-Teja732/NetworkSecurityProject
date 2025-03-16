@@ -2,8 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Transfer Money</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Search Users</title>
     <style>
         body {
             background-color: #f7f7f7;
@@ -73,17 +72,8 @@
             margin-bottom: 10px;
         }
     </style>
-    <script>
-        function goToProfile(name) {
-            alert("Redirecting to " + name + "'s profile.");
-            // Here you would normally use window.location.href = 'profile.php?user=' + name;
-        }
 
-        function sendMoney(name) {
-            alert("Redirecting to send money to " + name);
-            // Here you would normally use window.location.href = 'transfer.php?user=' + name;
-        }
-    </script>
+    <link href="/public/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
