@@ -14,7 +14,7 @@
         .main-container {
             background-color: #d1d1d1;
             padding: 30px;
-            max-width: 800px;
+            max-width: 90%;
             margin: 30px auto;
             border-radius: 15px;
         }

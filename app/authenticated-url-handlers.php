@@ -48,6 +48,12 @@ switch ($request_uri) {
 	case CREATE_TRANSACTION:
 		handle_create_transaction($session_username);
 		exit();
+	case UPLOAD_FILE_HANDLER:
+		handle_update_file($session_username);
+		exit();
+	case DOWNLOAD_FILE_HANDLER:
+		handle_download_file($session_username);
+		exit();
 	case in_array($request_uri, UNAUTHENTICATED_URL_LIST):
 		header("Location: " . HOME);
 		exit();

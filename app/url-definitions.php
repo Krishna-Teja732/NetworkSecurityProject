@@ -18,6 +18,9 @@ const EMAIL_UPDATE_HANDLER = "/api/update-email";
 const DESCRIPTION_UPDATE_HANDLER  = "/api/update-description";
 const GET_PROFILE_PICTURE = "/picture/";
 const CREATE_TRANSACTION = "/api/create-transaction";
+const UPLOAD_FILE_HANDLER = "/api/upload-file";
+const DOWNLOAD_FILE_HANDLER = "/api/download-file";
 
 # Paths that do not need authentication 
 const UNAUTHENTICATED_URL_LIST = [LOGIN, LOGIN_HANDLER, SIGNUP, SIGNUP_HANDLER];
+const AUTHENTICATED_URL_LIST = [HOME, MY_PROFILE, SEARCH_USERS, TRANSFER];

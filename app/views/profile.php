@@ -22,7 +22,7 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            width: 40%;
+            width: 60%;
             margin-top: 20px;
         }
 
@@ -102,6 +102,27 @@
                     <textarea type="text" class="form-control" id="description" name="description" rows="4" maxlength="200" required> <?php echo $data["description"]; ?></textarea>
                     <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
                     <input type="submit" class="form-control btn btn-danger mt-1" value="Update Description">
+                </form>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                <form action="<?php echo UPLOAD_FILE_HANDLER ?>" method="post" enctype="multipart/form-data">
+                    <label for="upload-file" class="fs-5 fw-bold">File Upload</label>
+                    <input id="upload-file" type="file" class="form-control-file btn" name="uploaded_file" required>
+                    <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
+                    <input type="submit" class="form-control btn btn-danger mt-1" value="Upload File">
+                </form>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                <form action="<?php echo DOWNLOAD_FILE_HANDLER ?>" method="post">
+                    <div class="fs-5 fw-bold">File Download</div>
+                    <input type="submit" class="form-control btn btn-danger mt-1" value="Download File">
+                    <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
                 </form>
             </div>
         <?php } else { ?>

@@ -31,6 +31,8 @@ switch ($request_uri) {
 	case SIGNUP_HANDLER:
 		handle_signup();
 		exit();
+	case str_starts_with($request_uri, OTHER_USER_PROFILE):
+	case in_array($request_uri, AUTHENTICATED_URL_LIST):
 	case '/':
 		header("Location: " . LOGIN);
 		exit();

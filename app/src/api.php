@@ -8,6 +8,7 @@ include_once __DIR__ . "/utils/input-sanatization-utils.php";
 function handle_login(): void
 {
 	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		syslog(LOG_INFO, "ERROR: Invalid CSRF Token: " . $_POST['csrf-token'] . " " . $_SESSION['csrf-token']);
 		header("Location: " . LOGIN);
 		exit();
 	}
@@ -189,7 +190,7 @@ function handle_update_description(string $username)
 # 8. Move file to /var/www/data/profile-pictures using move_uploaded_image
 # 9. Remove exec permission from file 
 # The images are stored in /var/www/data/profile-pictures/*.png
-const UPLOAD_DIR = "/var/www/data/profile-pictures";
+const PROFILE_PICTURE_UPLOAD_DIR = "/var/www/data/profile-pictures";
 function handle_update_profile_picture(string $username)
 {
 	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
@@ -242,7 +243,7 @@ function handle_update_profile_picture(string $username)
 	$new_file_name = bin2hex(random_bytes(12)) . ".png";
 	if (
 		!update_user_profile($username, "profile_picture_path", $new_file_name) ||
-		!imagepng($image, join(DIRECTORY_SEPARATOR, [UPLOAD_DIR, $new_file_name]))
+		!imagepng($image, join(DIRECTORY_SEPARATOR, [PROFILE_PICTURE_UPLOAD_DIR, $new_file_name]))
 	) {
 		$_SESSION["update-error"] = "Invalid Image";
 		header("Location: " . MY_PROFILE);
@@ -251,7 +252,7 @@ function handle_update_profile_picture(string $username)
 
 	# delete the old file
 	if (strcmp($old_file_name, "default-user-icon.png") != 0) {
-		$status = unlink(join(DIRECTORY_SEPARATOR, [UPLOAD_DIR, $old_file_name]));
+		$status = unlink(join(DIRECTORY_SEPARATOR, [PROFILE_PICTURE_UPLOAD_DIR, $old_file_name]));
 		$status = $status ? "SUCCESSFUL" : "FAILED";
 		syslog(LOG_INFO, "WARN: old profile picture delete status: $status");
 	}
@@ -301,4 +302,83 @@ function handle_create_transaction(string $current_user)
 		$_SESSION["transfer-error"] = "Transfer Failed: " . TRANSACTION_ERRORS[$errno];
 	}
 	header("Location: " . TRANSFER);
+}
+
+
+const FILE_UPLOAD_DIR = "/var/www/data/files";
+function handle_update_file(string $username)
+{
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+	if (!isset($_FILES['uploaded_file']['tmp_name']) || $_FILES['uploaded_file']['error'] != 0) {
+		$_SESSION["update-error"] = "Empty file/file size exceeded 2MB";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+	$allowed_extensions = ['txt'];
+	$allowed_mime_types = ['text/plain'];
+
+	$temp_file_name = $_FILES['uploaded_file']['tmp_name'];
+	$file_extension = strtolower(pathinfo(basename($_FILES['uploaded_file']['name']), PATHINFO_EXTENSION));
+	$file_mime_type = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temp_file_name);
+	syslog(LOG_INFO, "File extension: " . $file_extension);
+	syslog(LOG_INFO, "File MIME Type: " . $file_mime_type);
+	if (
+		!in_array($file_mime_type, $allowed_mime_types) ||
+		!in_array($file_extension, $allowed_extensions) ||
+		!is_uploaded_file($temp_file_name)
+	) {
+		$_SESSION["update-error"] = "Invalid File. Only .txt files are supported";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	$old_file_name = get_uploaded_file_name($username);
+	$new_file_name = bin2hex(random_bytes(12)) . ".txt";
+	if (
+		!update_user_profile($username, "uploaded_file_name", $new_file_name) ||
+		!move_uploaded_file($_FILES['uploaded_file']['tmp_name'], join(DIRECTORY_SEPARATOR, [FILE_UPLOAD_DIR, $new_file_name]))
+	) {
+		$_SESSION["update-error"] = "Invalid File";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	# delete the old file
+	if (!is_null($old_file_name)) {
+		$status = unlink(join(DIRECTORY_SEPARATOR, [FILE_UPLOAD_DIR, $old_file_name]));
+		$status = $status ? "SUCCESSFUL" : "FAILED";
+		syslog(LOG_INFO, "WARN: old profile picture delete status: $status");
+	}
+
+	unset($_SESSION["update-error"]);
+	$_SESSION["update-success"] = "File uploaded";
+	header("Location: " . MY_PROFILE);
+}
+
+function handle_download_file(string $username)
+{
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	# Get the file name
+	$file_name = get_uploaded_file_name($username);
+	$file_path = join(DIRECTORY_SEPARATOR, [FILE_UPLOAD_DIR, $file_name]);
+	if (is_null($file_name) || !file_exists($file_path)) {
+		$_SESSION["update-error"] = "No file uploaded";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	# Send file 
+	header('Content-Description: File Transfer');
+	header('Content-Type: text/plain');
+	header('Content-Disposition: attachment; filename=' . basename($file_name));
+	ob_clean();
+	flush();
+	readfile($file_path);
 }
