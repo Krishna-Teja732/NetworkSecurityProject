@@ -31,7 +31,10 @@ switch ($request_uri) {
 	case SIGNUP_HANDLER:
 		handle_signup();
 		exit();
-	default:
+	case '/':
 		header("Location: " . LOGIN);
+		exit();
+	default:
+		http_response_code(403);
 		exit();
 }
