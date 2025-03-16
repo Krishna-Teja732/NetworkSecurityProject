@@ -22,7 +22,7 @@
             padding: 20px;
             border-radius: 10px;
             text-align: center;
-            width: 40%;
+            width: 60%;
             margin-top: 20px;
         }
 

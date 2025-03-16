@@ -25,7 +25,11 @@ function create_new_user(string $username, string $email, string $password, int 
 	$default_icon_name = "default-user-icon.png";
 	try {
 		$db = get_db_connection();
-		$query = $db->prepare("insert into users values(?, ?, ?, ?, ?, ?);");
+		$query = $db->prepare(
+			"insert into 
+			users(username, email, description, profile_picture_path, password, balance) 
+			values(?, ?, ?, ?, ?, ?);"
+		);
 		$query->bind_param("sssssi", $username, $email, $default_description, $default_icon_name, $password_hash, $balance);
 		$query->execute();
 	} catch (Exception $e) {
@@ -185,12 +189,31 @@ function get_profile_picture_path(string $username): string| null
 	return $profile_picture_path;
 }
 
+function get_uploaded_file_name(string $username): string| null
+{
+	$uploaded_file_name = null;
+	try {
+		$db = get_db_connection();
+		$query = $db->prepare("select uploaded_file_name from users where username = ?;");
+		$query->bind_param("s", $username);
+		$query->execute();
+		$result = $query->get_result();
+		if ($result->num_rows == 1) {
+			$uploaded_file_name = $result->fetch_column();
+		}
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+	}
+
+	return $uploaded_file_name;
+}
+
 
 # Update profile, description, and email of a user
 #	$change_property valid values: "description, email, profile_picture_path"
 function update_user_profile(string $username, string $change_property, string $property_value): bool
 {
-	if (!in_array($change_property, ["description", "email", "profile_picture_path"])) {
+	if (!in_array($change_property, ["description", "email", "profile_picture_path", "uploaded_file_name"])) {
 		syslog(LOG_ERR, "ERROR: using invalid user property in db update utils");
 		return false;
 	}
