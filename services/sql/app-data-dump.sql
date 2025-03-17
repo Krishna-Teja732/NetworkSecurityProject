@@ -26,18 +26,18 @@ DROP TABLE IF EXISTS `transactions`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `transactions` (
   `transaction_id` binary(16) NOT NULL,
-  `sender_username` varchar(20) NOT NULL,
-  `receiver_username` varchar(20) NOT NULL,
+  `sender_username` varchar(20) COLLATE utf8mb4_0900_bin NOT NULL,
+  `receiver_username` varchar(20) COLLATE utf8mb4_0900_bin NOT NULL,
   `amount_sent` decimal(65,2) NOT NULL,
-  `transaction_remark` varchar(200) DEFAULT NULL,
+  `transaction_remark` varchar(200) COLLATE utf8mb4_0900_bin DEFAULT NULL,
   `transaction_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  KEY `username_transaction_index` (`sender_username`,`receiver_username`),
+  KEY `username_transaction_index` (`sender_username`),
   KEY `transactions_ibfk_2` (`receiver_username`),
   CONSTRAINT `transactions_ibfk_1` FOREIGN KEY (`sender_username`) REFERENCES `users` (`username`) ON DELETE RESTRICT,
   CONSTRAINT `transactions_ibfk_2` FOREIGN KEY (`receiver_username`) REFERENCES `users` (`username`) ON DELETE RESTRICT,
   CONSTRAINT `positive_amount_sent_check` CHECK ((`amount_sent` > 0)),
   CONSTRAINT `sender_not_eq_receiver_check` CHECK ((`sender_username` <> `receiver_username`))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,7 +46,7 @@ CREATE TABLE `transactions` (
 
 LOCK TABLES `transactions` WRITE;
 /*!40000 ALTER TABLE `transactions` DISABLE KEYS */;
-INSERT INTO `transactions` VALUES (_binary '\Ât¬üå8°ò	M~o\‘\„\ﬂ','b','a',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary 'brª®\–\Ì≠^R\ \‚EJcÇñ','c','b',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary 'y„Üå´ıjı™&~?µDv','aa','c',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary 'X\·-g]vâﬂ™1wuØ4•','a','c',20.00,'new transaction with date','2025-03-04 07:26:08'),(_binary '\Ìe!ß\Ó†9{\ÈaX⁄®°','b','a',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary '\ﬂdDn\Ì˘6Mè-¥3†¢Z','c','b',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary '\Èﬁ∂Å\Í’æ˘\Ó\ƒyc˛¢n','aa','c',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary '\Ô´ï\Z;7Nã§\’¬¨ø','a','c',20.00,'new transaction with date','2025-03-04 07:26:08'),(_binary 'IHbBÉóè\·òX¶\\˝©ü','b','a',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary '\”«Åd0\¬Dµ2\ÿtt`L\‡','c','b',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary '<Çá˜wd5ûü#µ\⁄cn','aa','c',10.00,'new transaction with date','2025-03-04 07:26:08'),(_binary '\∆˚ëRU\…>ªx5\«uå/&','a','c',20.00,'new transaction with date','2025-03-04 07:26:08'),(_binary '\‹YÒú\√8\¬\\î]¥ap','babbaa','b',5.00,'new transaction with date','2025-03-04 07:29:29'),(_binary 'ñz¯°Oó2Bº{1Ø^˝','b','babbaa',7.00,'new transaction with date','2025-03-04 07:29:29'),(_binary 'ÿ¥îf\Â\\c\‘oOÉ$≤1ß','babbaa','b',5.00,'new transaction with date','2025-03-04 07:29:30'),(_binary 'ZzS/◊¥e]®;Q¶ı','b','babbaa',7.00,'new transaction with date','2025-03-04 07:29:30'),(_binary 'L®ï•∂úZ‘àG-W_\"','babbaa','b',5.00,'new transaction with date','2025-03-04 07:29:30'),(_binary '¥æ∫\⁄*oPR\Èä\·|','b','babbaa',7.00,'new transaction with date','2025-03-04 07:29:30'),(_binary 'Gí\nÆtÚ\Î˚$t ë6˚ç','ktb','a',19.00,'','2025-03-16 18:49:35');
+INSERT INTO `transactions` VALUES (_binary 'Û§â≤0çv9\Î¨R\÷\Èå','ktb','sai',10.00,'','2025-03-17 08:23:01');
 /*!40000 ALTER TABLE `transactions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,16 +58,16 @@ DROP TABLE IF EXISTS `users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `username` varchar(20) NOT NULL,
-  `email` varchar(20) NOT NULL,
-  `description` varchar(200) NOT NULL,
-  `profile_picture_path` char(36) NOT NULL,
-  `password` char(60) NOT NULL,
+  `username` varchar(20) COLLATE utf8mb4_0900_bin NOT NULL,
+  `email` varchar(20) COLLATE utf8mb4_0900_bin NOT NULL,
+  `description` varchar(200) COLLATE utf8mb4_0900_bin NOT NULL,
+  `profile_picture_path` char(36) COLLATE utf8mb4_0900_bin NOT NULL,
+  `password` char(60) COLLATE utf8mb4_0900_bin NOT NULL,
   `balance` decimal(65,2) NOT NULL,
-  `uploaded_file_name` char(36) DEFAULT NULL,
+  `uploaded_file_name` char(36) COLLATE utf8mb4_0900_bin DEFAULT NULL,
   PRIMARY KEY (`username`),
   CONSTRAINT `users_chk_1` CHECK ((`balance` >= 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_bin;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,7 +76,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES ('a','a@mail.com','This is a new description','default-user-icon.png','$2y$10$1qBwcvnRq/ocoAzX8IzdGu3T5yE/Dls/v81U2erHv4jit1n2WV7f6',129.00,NULL),('aa','aa@gmail.com','No description added','default-user-icon.png','$2y$10$ht4bURNw36nH9rsNq7396u/Fbi2m8qVfmGZdnBA7cTner4BeepDAy',40.00,NULL),('b','b@mail','No description added','default-user-icon.png','$2y$10$ZZVbRxNutHCSmZD8kIIEYOVjtVq56O0iz1Ni3vjX9hr74x/6dPM6K',94.00,NULL),('babbaa','babbaa@gmail.com','No description added','default-user-icon.png','$2y$10$3xy11k9x8VnU6xMMhx3fq.BCH/vem2oQLBM/FBsAG8w5O1QAFFwBq',106.00,NULL),('c','c@mail.com','No description added','default-user-icon.png','$2y$10$yyZLCgwJSv21YOjVyESGXuOPgRAYTr1jTKB9ji3Ozy/kb7ZhHOnLm',150.00,NULL),('ktb','ktb@mail.com','~~~~','default-user-icon.png','$2y$10$5IvEbpQxyPJBcEjsMURZseakQdfoq44vHhk7Um2EjXfxJj.43nOv.',81.00,NULL);
+INSERT INTO `users` VALUES ('ktb','ktb@gmail.com','No description added','default-user-icon.png','$2y$10$pHec1/cjjbyrPUOgOgdroeSQVcrbRUfDH6nCPuPRjZpMVNyW//2/W',90.00,NULL),('sai','sai@gmail.com','No description added','default-user-icon.png','$2y$10$YivsxQ6uACC/MBqz7tTAlO7OtbH7SBYeewUqJc9JeNQLu7NA/YXBS',110.00,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -89,4 +89,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-17  0:27:59
+-- Dump completed on 2025-03-17 13:55:01
