@@ -36,6 +36,20 @@ docker ps -f 'name=team-6'
 docker compose down
 ```
 
+### Contributions
+1. Divyanshu Ranjan - CS24MTECH11013
+- Frontend Code 
+2. Jayanth Jatavath - CS24MTECH11014
+- Frontend Wireframe Design
+3. Peddi Manognya - CS24MTECH12020
+- Frontend Code 
+4. Krishna Teja B - CS24MTECH12011
+- Docker setup
+- Backend code(php, mysql)
+5. Sai Sravan V - CS24MTECH02007
+- Input validation(how to prevent attacks)
+- Testing attacks/website
+
 ### References
 1. [MySQL Transactions](https://dev.mysql.com/doc/refman/8.4/en/commit.html)
 2. [HTTP header based authentication](https://security.stackexchange.com/questions/91546/any-reasons-for-using-basic-http-authentication)
