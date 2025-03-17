@@ -45,6 +45,9 @@ switch ($request_uri) {
 	case DESCRIPTION_UPDATE_HANDLER:
 		handle_update_description($session_username);
 		exit();
+	case PASSWORD_UPDATE_HANDLER:
+		handle_update_password($session_username);
+		exit();
 	case CREATE_TRANSACTION:
 		handle_create_transaction($session_username);
 		exit();
@@ -53,6 +56,10 @@ switch ($request_uri) {
 		exit();
 	case DOWNLOAD_FILE_HANDLER:
 		handle_download_file($session_username);
+		exit();
+	case str_starts_with($request_uri, GET_PROFILE_PICTURE_HANDLER):
+		$picture_name = substr($request_uri, mb_strlen(GET_PROFILE_PICTURE_HANDLER));
+		handle_get_profile_picture($picture_name);
 		exit();
 	case in_array($request_uri, UNAUTHENTICATED_URL_LIST):
 		header("Location: " . HOME);

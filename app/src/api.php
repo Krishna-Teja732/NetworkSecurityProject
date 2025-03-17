@@ -102,7 +102,7 @@ function handle_view_profile(string $username, bool $is_owner)
 	} else {
 		# To send the profile picture, there's an apache mod_rewrite rule to serve images directly
 		# any url starting with /picture/.*\.png will be served from ./data/profile-pictures/
-		$data['profile_picture_path'] = "/picture/" . $data['profile_picture_path'];
+		$data['profile_picture_path'] = GET_PROFILE_PICTURE_HANDLER . $data['profile_picture_path'];
 		$data['is_owner'] = $is_owner;
 		require __DIR__ . "/../views/profile.php";
 	}
@@ -111,7 +111,7 @@ function handle_view_profile(string $username, bool $is_owner)
 function handle_view_home(string $username)
 {
 	$data = get_home_page_info($username);
-	$data["profile_picture_path"] = GET_PROFILE_PICTURE . $data["profile_picture_path"];
+	$data["profile_picture_path"] = GET_PROFILE_PICTURE_HANDLER . $data["profile_picture_path"];
 
 	$transactions = [];
 	foreach ($data["transactions"] as $transaction) {
@@ -175,6 +175,53 @@ function handle_update_description(string $username)
 
 	unset($_SESSION["update-error"]);
 	$_SESSION["update-success"] = "Description updated";
+	header("Location: " . MY_PROFILE);
+}
+
+function handle_update_password(string $username)
+{
+	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	# Check if all input attributes are set
+	if (!isset($_POST['old-password']) && !isset($_POST['new-password']) && !isset($_POST['confirm-new-password'])) {
+		$_SESSION["update-error"] = "Password cannot be empty";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+	$old_password = $_POST['old-password'];
+	$new_password = $_POST['new-password'];
+	$confirm_new_password = $_POST['confirm-new-password'];
+
+	# Verify old password
+	$password_hash = get_user_password($username);
+	if ($password_hash == null or !password_verify($old_password, $password_hash)) {
+		$_SESSION["update-error"] = "Incorrect Password";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	# Redirect to profile on invalid inputs
+	if (
+		!validate_password($new_password) ||
+		strcmp($new_password, $confirm_new_password) != 0
+	) {
+		$_SESSION["update-error"] = "Invalid new password";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	# Update database
+	if (!update_user_password($username, $new_password)) {
+		$_SESSION["update-error"] = "Password Unchanged";
+		header("Location: " . MY_PROFILE);
+		exit();
+	}
+
+	unset($_SESSION["update-error"]);
+	$_SESSION["update-success"] = "Password changed";
 	header("Location: " . MY_PROFILE);
 }
 
@@ -323,14 +370,12 @@ function handle_update_file(string $username)
 	$temp_file_name = $_FILES['uploaded_file']['tmp_name'];
 	$file_extension = strtolower(pathinfo(basename($_FILES['uploaded_file']['name']), PATHINFO_EXTENSION));
 	$file_mime_type = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $temp_file_name);
-	syslog(LOG_INFO, "File extension: " . $file_extension);
-	syslog(LOG_INFO, "File MIME Type: " . $file_mime_type);
 	if (
 		!in_array($file_mime_type, $allowed_mime_types) ||
 		!in_array($file_extension, $allowed_extensions) ||
 		!is_uploaded_file($temp_file_name)
 	) {
-		$_SESSION["update-error"] = "Invalid File. Only .txt files are supported";
+		$_SESSION["update-error"] = "Invalid File. Only plain text files are supported";
 		header("Location: " . MY_PROFILE);
 		exit();
 	}
@@ -381,4 +426,24 @@ function handle_download_file(string $username)
 	ob_clean();
 	flush();
 	readfile($file_path);
+}
+
+
+function handle_get_profile_picture(string $picture_name)
+{
+	$picture_name = basename($picture_name);
+	$picture_path = join(DIRECTORY_SEPARATOR, [PROFILE_PICTURE_UPLOAD_DIR, $picture_name]);
+
+	if (!file_exists($picture_path)) {
+		http_response_code(404);
+		exit();
+	}
+
+	header("Content-Type: image/png");
+	# If the readfile fails send a 404 error
+	if (!readfile($picture_path)) {
+		http_response_code(404);
+		exit();
+	}
+	ob_flush();
 }

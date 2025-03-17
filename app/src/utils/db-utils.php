@@ -233,6 +233,24 @@ function update_user_profile(string $username, string $change_property, string $
 	return $update_success;
 }
 
+function update_user_password(string $username, string $new_password): bool
+{
+	$password_hash = password_hash($new_password, PASSWORD_BCRYPT);
+	$update_query = "update users set password = ? where username = ?";
+	$update_success = false;
+	try {
+		$db = get_db_connection();
+		$query = $db->prepare($update_query);
+		$query->bind_param("ss", $password_hash, $username);
+		$query->execute();
+		if ($query->errno == 0 && $query->affected_rows == 1) {
+			$update_success = true;
+		}
+	} catch (Exception $e) {
+		syslog(LOG_ERR, $e->getCode() . " " . $e->getMessage() . " " . $e->getTraceAsString());
+	}
+	return $update_success;
+}
 
 const TRANSACTION_ERRORS = [1 => "Invalid Username", 1406 => "Remark too long",  3819 => "Insufficient Balance"];
 function create_new_transaction(string $sender_uname, string $receiver_uname, float $amount, string $description): int

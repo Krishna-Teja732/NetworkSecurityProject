@@ -67,6 +67,30 @@
     </div>
 
     <div class="profile-container">
+
+        <?php
+        if (isset($_SESSION["update-success"])) {
+            $status = $_SESSION["update-success"];
+            unset($_SESSION["update-success"]);
+        ?>
+            <button class="form-control btn btn-success mt-3 mb-3" disabled="true">
+                <?php echo $status; ?>
+            </button>
+        <?php
+        }
+        ?>
+
+        <?php
+        if (isset($_SESSION["update-error"])) {
+            $error = $_SESSION["update-error"];
+            unset($_SESSION["update-error"]);
+        ?>
+            <button class="form-control btn btn-danger mb-3 mt-3" disabled="true">
+                <?php echo $error ?>
+            </button>
+        <?php
+        }
+        ?>
         <img class="profile-pic" src=<?php echo $data["profile_picture_path"] ?>>
         <?php if ($data["is_owner"]) { ?>
             <div class="form-group">
@@ -91,6 +115,20 @@
                     <input type="email" class="form-control" name="email" id="email" value="<?php echo $data["email"]; ?>" required>
                     <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
                     <input type="submit" class="form-control btn btn-danger mt-1" value="Update Email">
+                </form>
+            </div>
+
+            <hr>
+
+            <div class="form-group mt-3">
+                <form action="<?= PASSWORD_UPDATE_HANDLER ?>" method="post">
+                    <label class="fs-5 fw-bold">Password</label>
+                    <input type="password" class="form-control mt-1" placeholder="Old Password" name="old-password" minlength="8" required>
+                    <input type="password" class="form-control mt-1" placeholder="New Password" name="new-password" minlength="8" required>
+                    <input type="password" class="form-control mt-1" placeholder="Confirm New Password" name="confirm-new-password" minlength="8" required>
+                    <div class="form-text fw-thinner m-0">Password should be atleast 8 charachers long</div>
+                    <input type="submit" class="form-control btn btn-danger mt-1" value="Update Password">
+                    <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
                 </form>
             </div>
 
@@ -145,32 +183,6 @@
                 <p type="text" class="form-control form-control-plaintext" id="description" name="description" rows="4" readonly> <?php echo $data["description"]; ?></p>
             </div>
         <?php } ?>
-
-        <?php
-        if (isset($_SESSION["update-success"])) {
-            $status = $_SESSION["update-success"];
-            unset($_SESSION["update-success"]);
-        ?>
-            <button class="form-control btn btn-success mt-3 mb-3" disabled="true">
-                <?php echo $status; ?>
-            </button>
-        <?php
-        }
-        ?>
-
-        <?php
-        if (isset($_SESSION["update-error"])) {
-            $error = $_SESSION["update-error"];
-            unset($_SESSION["update-error"]);
-        ?>
-            <button class="form-control btn btn-danger mb-3 mt-3" disabled="true">
-                <?php echo $error ?>
-            </button>
-        <?php
-        }
-        ?>
-
-
 </body>
 
 </html>

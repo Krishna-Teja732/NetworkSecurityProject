@@ -11,6 +11,15 @@ function validate_username(string $input): bool
     return preg_match('/^[a-zA-Z0-9_]+$/', $input);
 }
 
+function validate_password(string $password): bool
+{
+    return strlen($password) > 7;
+}
+
+function validate_email(string $email): bool
+{
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
+}
 
 function validate_signup_inputs(string $username, string $password, string $email): bool
 {
@@ -24,8 +33,8 @@ function validate_signup_inputs(string $username, string $password, string $emai
     // Email format validation
     if (
         validate_username($username) &&
-        strlen($password) > 7 &&
-        filter_var($email, FILTER_VALIDATE_EMAIL)
+        validate_password($password) &&
+        validate_email($email)
     ) {
         return true;
     }
