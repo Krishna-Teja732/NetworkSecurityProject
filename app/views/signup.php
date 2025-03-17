@@ -123,11 +123,11 @@
 
                 <form method="post" action="/api/signup-handler">
                     <div class="form-group">
-                        <input type="text" class="form-control mb-0" placeholder="Username" name="username" pattern="^[a-zA-Z0-9_]+" required>
+                        <input type="text" class="form-control mb-0" placeholder="Username" name="username" maxlength="40" pattern="^[a-zA-Z0-9_]+" required>
                         <div class="form-text fw-thinner m-0">Only character from [a-z, A-Z, 0-9, _] are allowed</div>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control mt-4" placeholder="Email" name="email" required>
+                        <input type="text" class="form-control mt-4" placeholder="Email" name="email" maxlength="50" required>
                     </div>
                     <div class="form-group">
                         <input type="password" class="form-control mt-4" placeholder="Password" name="password" minlength="8" required>
