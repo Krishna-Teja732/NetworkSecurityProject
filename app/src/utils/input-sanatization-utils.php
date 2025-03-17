@@ -51,7 +51,7 @@ function validate_signin_inputs(string $username, string $password): bool
     // Password size should be greater than 2
     if (
         validate_username($username) &&
-        strlen($password) > 2
+        validate_password($password)
     ) {
         return true;
     }
@@ -66,8 +66,6 @@ function validate_transactions_inputs(string $receiver_username, string $sender_
         $receiver_username != $sender_username &&
         validate_username($receiver_username) &&
         validate_username($sender_username) &&
-        // Trasaction amount must be greater than 0
-        is_numeric($amount) &&
         filter_var($amount, FILTER_VALIDATE_INT, ["options" => ["min_range" => 1]])
     ) {
         return true;

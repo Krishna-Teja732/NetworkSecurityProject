@@ -19,8 +19,6 @@ const DESCRIPTION_UPDATE_HANDLER  = "/api/update-description";
 const PASSWORD_UPDATE_HANDLER = "/api/udpate-password";
 const GET_PROFILE_PICTURE_HANDLER = "/api/get-profile-picture/";
 const CREATE_TRANSACTION = "/api/create-transaction";
-const UPLOAD_FILE_HANDLER = "/api/upload-file";
-const DOWNLOAD_FILE_HANDLER = "/api/download-file";
 
 # Paths that do not need authentication 
 const UNAUTHENTICATED_URL_LIST = [LOGIN, LOGIN_HANDLER, SIGNUP, SIGNUP_HANDLER];

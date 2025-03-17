@@ -64,16 +64,12 @@
 
     <div class="navbar-container">
         <?php require 'navbar.php'; ?>
-    </div>
-
-    <div class="profile-container">
-
         <?php
         if (isset($_SESSION["update-success"])) {
             $status = $_SESSION["update-success"];
             unset($_SESSION["update-success"]);
         ?>
-            <button class="form-control btn btn-success mt-3 mb-3" disabled="true">
+            <button class="form-control btn btn-success" disabled="true">
                 <?php echo $status; ?>
             </button>
         <?php
@@ -85,12 +81,16 @@
             $error = $_SESSION["update-error"];
             unset($_SESSION["update-error"]);
         ?>
-            <button class="form-control btn btn-danger mb-3 mt-3" disabled="true">
+            <button class="form-control btn btn-danger" disabled="true">
                 <?php echo $error ?>
             </button>
         <?php
         }
         ?>
+    </div>
+
+    <div class="profile-container">
+
         <img class="profile-pic" src=<?php echo $data["profile_picture_path"] ?>>
         <?php if ($data["is_owner"]) { ?>
             <div class="form-group">
@@ -143,26 +143,6 @@
                 </form>
             </div>
 
-            <hr>
-
-            <div class="form-group">
-                <form action="<?php echo UPLOAD_FILE_HANDLER ?>" method="post" enctype="multipart/form-data">
-                    <label for="upload-file" class="fs-5 fw-bold">File Upload</label>
-                    <input id="upload-file" type="file" class="form-control-file btn" name="uploaded_file" required>
-                    <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
-                    <input type="submit" class="form-control btn btn-danger mt-1" value="Upload File">
-                </form>
-            </div>
-
-            <hr>
-
-            <div class="form-group">
-                <form action="<?php echo DOWNLOAD_FILE_HANDLER ?>" method="post">
-                    <div class="fs-5 fw-bold">File Download</div>
-                    <input type="submit" class="form-control btn btn-danger mt-1" value="Download File">
-                    <input type="hidden" name="csrf-token" value="<?php echo $_SESSION['csrf-token']; ?>">
-                </form>
-            </div>
         <?php } else { ?>
             <hr>
 

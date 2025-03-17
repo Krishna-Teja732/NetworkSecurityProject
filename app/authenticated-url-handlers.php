@@ -51,12 +51,6 @@ switch ($request_uri) {
 	case CREATE_TRANSACTION:
 		handle_create_transaction($session_username);
 		exit();
-	case UPLOAD_FILE_HANDLER:
-		handle_update_file($session_username);
-		exit();
-	case DOWNLOAD_FILE_HANDLER:
-		handle_download_file($session_username);
-		exit();
 	case str_starts_with($request_uri, GET_PROFILE_PICTURE_HANDLER):
 		$picture_name = substr($request_uri, mb_strlen(GET_PROFILE_PICTURE_HANDLER));
 		handle_get_profile_picture($picture_name);

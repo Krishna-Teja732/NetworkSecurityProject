@@ -63,6 +63,31 @@
 
 	<div class="navbar-container">
 		<?php require __DIR__ . '/navbar.php'; ?>
+
+		<?php
+		if (isset($_SESSION["transfer-success"])) {
+			unset($_SESSION["transfer-success"]);
+		?>
+			<button class="form-control btn btn-success" disabled="true">
+				Transfer Successful
+			</button>
+		<?php
+		}
+		?>
+
+		<?php
+		if (isset($_SESSION["transfer-error"])) {
+			$error = $_SESSION["transfer-error"];
+			unset($_SESSION["transfer-error"]);
+		?>
+			<button class="form-control btn btn-danger" disabled="true">
+				<?php echo $error ?>
+			</button>
+		<?php
+		}
+		?>
+
+
 	</div>
 
 	<div class="profile-container">
@@ -78,29 +103,6 @@
 				<input type="submit" class="form-control btn btn-danger mt-3" value="Send Amount">
 			</form>
 		</div>
-
-		<?php
-		if (isset($_SESSION["transfer-success"])) {
-			unset($_SESSION["transfer-success"]);
-		?>
-			<button class="form-control btn btn-success mt-3 mb-3" disabled="true">
-				Transfer Successful
-			</button>
-		<?php
-		}
-		?>
-
-		<?php
-		if (isset($_SESSION["transfer-error"])) {
-			$error = $_SESSION["transfer-error"];
-			unset($_SESSION["transfer-error"]);
-		?>
-			<button class="form-control btn btn-danger mb-3 mt-3" disabled="true">
-				<?php echo $error ?>
-			</button>
-		<?php
-		}
-		?>
 
 </body>
 

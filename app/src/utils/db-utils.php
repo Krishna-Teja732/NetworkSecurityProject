@@ -137,7 +137,7 @@ function get_all_users(string $username_search_query = ""): array|null
 	$usernames = null;
 	try {
 		$db = get_db_connection();
-		$query = $db->prepare("select username from users where username like ?;");
+		$query = $db->prepare("select username from users where username like ? collate utf8mb4_0900_ai_ci;");
 		$query->bind_param("s", $username_search_query);
 		$query->execute();
 		$result = $query->get_result();

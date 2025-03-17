@@ -85,8 +85,8 @@
     <!-- Main Content -->
     <div class="main-container">
         <form method="get" action="<?= SEARCH_USERS ?>">
-            <input type="text" class="search-bar" name="username"
-                <?php if ($data['search-query'] != '') {
+            <input type="text" pattern="^[a-zA-Z0-9_]+" class="search-bar" name="username"
+                <?php if (isset($data['search-query']) && $data['search-query'] != '') {
                     echo "value=" .  $data['search-query'];
                 }  ?>
                 placeholder="🔍 Search Users">
@@ -98,7 +98,7 @@
             if (!isset($data["users"])) {
             ?>
                 <div class="contact-item" style="justify-content: center;">
-                    <span>No users Found</span>
+                    <span>No users Found/Invalid Username</span>
                 </div>
                 <?php
             } else {

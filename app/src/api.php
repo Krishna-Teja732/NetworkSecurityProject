@@ -313,10 +313,11 @@ function handle_update_profile_picture(string $username)
 function handle_search_users()
 {
 	$search_username = array_key_exists('username', $_GET) ? $_GET['username'] : '';
-	$search_username = validate_username($search_username) ? sanitize_input_string($search_username) : '';
-	$data['search-query'] = $search_username;
-	if (($users_list = get_all_users($search_username)) != null) {
-		$data['users'] = $users_list;
+	if (validate_username($search_username) || strcmp($search_username, '') == 0) {
+		$data['search-query'] = $search_username;
+		if (($users_list = get_all_users($search_username)) != null) {
+			$data['users'] = $users_list;
+		}
 	}
 	require __DIR__ . "/../views/search_users.php";
 }
@@ -351,8 +352,28 @@ function handle_create_transaction(string $current_user)
 	header("Location: " . TRANSFER);
 }
 
+function handle_get_profile_picture(string $picture_name)
+{
+	$picture_name = basename($picture_name);
+	$picture_path = join(DIRECTORY_SEPARATOR, [PROFILE_PICTURE_UPLOAD_DIR, $picture_name]);
 
-const FILE_UPLOAD_DIR = "/var/www/data/files";
+	if (!file_exists($picture_path)) {
+		http_response_code(404);
+		exit();
+	}
+
+	header("Content-Type: image/png");
+	# If the readfile fails send a 404 error
+	if (!readfile($picture_path)) {
+		http_response_code(404);
+		exit();
+	}
+	ob_flush();
+}
+
+// NOTE: These functions are not used anymore, since file upload/download is not required
+
+/*const FILE_UPLOAD_DIR = "/var/www/data/files";
 function handle_update_file(string $username)
 {
 	if (!isset($_POST['csrf-token']) || $_POST['csrf-token'] != $_SESSION['csrf-token']) {
@@ -427,23 +448,4 @@ function handle_download_file(string $username)
 	flush();
 	readfile($file_path);
 }
-
-
-function handle_get_profile_picture(string $picture_name)
-{
-	$picture_name = basename($picture_name);
-	$picture_path = join(DIRECTORY_SEPARATOR, [PROFILE_PICTURE_UPLOAD_DIR, $picture_name]);
-
-	if (!file_exists($picture_path)) {
-		http_response_code(404);
-		exit();
-	}
-
-	header("Content-Type: image/png");
-	# If the readfile fails send a 404 error
-	if (!readfile($picture_path)) {
-		http_response_code(404);
-		exit();
-	}
-	ob_flush();
-}
+*/
