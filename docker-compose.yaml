@@ -2,7 +2,7 @@ services:
 
   # Apache httpd webserver 
   httpd:
-    container_name: httpd-server
+    container_name: team-6-httpd-server
     ports:
       - ${SERVER_PORT}:443
     build: 
@@ -17,7 +17,7 @@ services:
 
   # PHP web app
   php:
-    container_name: php-fpm
+    container_name: team-6-php-fpm
     env_file: .env
     build:
       context: .
@@ -29,28 +29,21 @@ services:
     networks: 
       - web-app-network
 
+  # Container for source code 
   data:
-    container_name: source-code
+    container_name: team-6-source-code
     build:
       context: .
       dockerfile: ./services/data/DockerFile
     volumes:
       - /var/www/
-    # TODO: remove watch before production
-    develop:
-      watch:
-        - path: ./app 
-          action: sync 
-          target: /var/www/html
 
+  # MySQL container
   db:
     container_name: ${MYSQL_HOSTNAME}
     image: mysql:8.4
     volumes:
       - ./services/sql/app-data-dump.sql:/docker-entrypoint-initdb.d/app-data-dump.sql
-    # TODO: Remove port after developement
-    ports:
-      - 33060:3306 
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}

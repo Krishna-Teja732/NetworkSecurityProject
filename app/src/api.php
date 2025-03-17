@@ -36,7 +36,16 @@ function handle_login(): void
 	$cookie_value = bin2hex(random_bytes(16));
 	$_SESSION[$cookie_value] = $username;
 	header("Location: " . HOME);
-	setcookie("session", $cookie_value, path: '/', secure: true, httponly: true);
+	setcookie(
+		"session",
+		$cookie_value,
+		[
+			'path' => '/',
+			'secure' => true,
+			'httponly' => true,
+			'samesite' => 'strict'
+		]
+	);
 	exit();
 }
 
